@@ -41,7 +41,7 @@
     "href": "pages/06-good-practice.html#exercise",
     "title": "Good practice and next steps",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
     "crumbs": [
       "6  Good practice"
     ]
@@ -121,7 +121,7 @@
     "href": "pages/04-one-gpu.html#exercise",
     "title": "Training on one GPU",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nWhat is the recall for the fractured class, in plain English?\nHow many real fractures in the test set did the model miss?\nWould you use it to decide which X-rays to look at first?\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nA recall of 0.70 means 70% of fractures were found and 30% missed. Missed fractures are in the fractured row, not_fractured column. Almost certainly not yet: you’d want to know how it does at other hospitals, on each body region, and with a split by patient.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nWhat is the recall for the fractured class, in plain English?\nHow many real fractures in the test set did the model miss?\nWould you use it to decide which X-rays to look at first?\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nA recall of 0.70 means 70% of fractures were found and 30% missed. Missed fractures are in the fractured row, not_fractured column. Almost certainly not yet: you’d want to know how it does at other hospitals, on each body region, and with a split by patient.",
     "crumbs": [
       "4  Training on one GPU"
     ]
@@ -161,7 +161,7 @@
     "href": "pages/02-isambard.html#exercise",
     "title": "Getting onto Isambard-AI",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
     "crumbs": [
       "2  Getting onto Isambard-AI"
     ]
@@ -251,7 +251,7 @@
     "href": "pages/01-why-hpc.html#exercise",
     "title": "Why HPC for AI?",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
     "crumbs": [
       "1  Why HPC for AI?"
     ]
@@ -291,7 +291,7 @@
     "href": "pages/03-fracatlas.html#exercise",
     "title": "Meet FracAtlas",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
     "crumbs": [
       "3  Meet FracAtlas"
     ]
@@ -331,7 +331,7 @@
     "href": "pages/05-four-gpus.html#exercise",
     "title": "Scaling to four GPUs",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
     "crumbs": [
       "5  Scaling to four GPUs"
     ]

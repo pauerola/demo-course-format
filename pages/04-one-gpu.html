@@ -112,14 +112,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="../index.html" class="sidebar-logo-link">
       <img src="../assets/logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
-      <div class="sidebar-tools-main">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">HPC for AI · Part 1</a> 
+        <div class="sidebar-tools-main">
     <a href="../slides.html" title="Slides" class="quarto-navigation-tool px-1" aria-label="Slides"><i class="bi bi-easel"></i></a>
     <a href="../hpc-for-ai.ipynb" title="Notebook" class="quarto-navigation-tool px-1" aria-label="Notebook"><i class="bi bi-journal-code"></i></a>
 </div>
+    </div>
       </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
@@ -412,8 +415,10 @@ Exercise · 10 min
 <li>How many real fractures in the test set did the model miss?</li>
 <li>Would you use it to decide which X-rays to look at first?</li>
 </ol>
+</div>
+</div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Show answer">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -422,11 +427,9 @@ Show answer
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A recall of 0.70 means 70% of fractures were found and 30% missed. Missed fractures are in the fractured row, not_fractured column. Almost certainly not yet: you’d want to know how it does at other hospitals, on each body region, and with a split by patient.</p>
-</div>
-</div>
 </div>
 </div>
 </div>
