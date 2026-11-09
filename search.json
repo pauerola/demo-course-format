@@ -1,169 +1,312 @@
 [
   {
-    "objectID": "slides.html#placeholder-slides",
-    "href": "slides.html#placeholder-slides",
+    "objectID": "pages/07-credits.html",
+    "href": "pages/07-credits.html",
+    "title": "Credits and references",
+    "section": "",
+    "text": "Section 7 of 7",
+    "crumbs": [
+      "7  Credits and references"
+    ]
+  },
+  {
+    "objectID": "pages/07-credits.html#credits",
+    "href": "pages/07-credits.html#credits",
+    "title": "Credits and references",
+    "section": "Credits",
+    "text": "Credits\nThis course is based on Evie Grace’s Radiograph-Reader project. Developed by the Jean Golding Institute, University of Bristol. © CC BY 4.0.",
+    "crumbs": [
+      "7  Credits and references"
+    ]
+  },
+  {
+    "objectID": "pages/07-credits.html#acknowledgements",
+    "href": "pages/07-credits.html#acknowledgements",
+    "title": "Credits and references",
+    "section": "Acknowledgements",
+    "text": "Acknowledgements\nThis course uses the FracAtlas dataset. Computing time on Isambard-AI is provided by the Bristol Centre for Supercomputing (BriCS) as part of the UK AI Research Resource.",
+    "crumbs": [
+      "7  Credits and references"
+    ]
+  },
+  {
+    "objectID": "pages/07-credits.html#references",
+    "href": "pages/07-credits.html#references",
+    "title": "Credits and references",
+    "section": "References",
+    "text": "References\nIf you use FracAtlas in your own work, please cite:\nAbedeen, I., Rahman, M. A., Prottyasha, F. Z., Ahmed, T., Chowdhury, T. M. & Shatabda, S. (2023). FracAtlas: A Dataset for Fracture Classification, Localization and Segmentation of Musculoskeletal Radiographs. Scientific Data, 10, 521. https://doi.org/10.1038/s41597-023-02432-4\nThe dataset is available from figshare under a CC BY 4.0 licence.",
+    "crumbs": [
+      "7  Credits and references"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html",
+    "href": "pages/05-four-gpus.html",
+    "title": "Scaling to four GPUs",
+    "section": "",
+    "text": "Section 5 of 7",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#data-parallelism",
+    "href": "pages/05-four-gpus.html#data-parallelism",
+    "title": "Scaling to four GPUs",
+    "section": "5.1 Data parallelism",
+    "text": "5.1 Data parallelism\nSo far, we’ve trained on one GPU, but each Isambard-AI node has four. The simplest way to use all four is called data parallelism.\n\n\nEach GPU gets its own copy of the model.\nEach batch is shared out between the GPUs. With a batch of 64 and four GPUs, each GPU gets 16 images.\nEach GPU works out how the model should change, using its own 16 images. These changes are called gradients.\nThe GPUs average their gradients. They do this by sending data directly to each other, using an NVIDIA library called NCCL, in a step called an all-reduce.\nEach GPU updates its copy of the model with the averaged gradients, so all four copies stay the same.",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#whats-happening-behind-the-scenes",
+    "href": "pages/05-four-gpus.html#whats-happening-behind-the-scenes",
+    "title": "Scaling to four GPUs",
+    "section": "5.2 What’s happening behind the scenes",
+    "text": "5.2 What’s happening behind the scenes\nPyTorch does this using Distributed Data Parallel (DDP). DDP runs a separate Python process for each GPU, and gives each process a number from 0 to 3, called its rank.\n\n\n\n\n\n\nGoing deeper: how Ultralytics starts the processes\n\n\n\n\n\nYour notebook is only one Python process, so Ultralytics gets round this by writing a short training script and running four copies of it, one per GPU, with PyTorch’s torch.distributed.run command. Look for a line starting with DDP: in the output, which shows the exact command it used.\nIf you run nvidia-smi in a terminal while it’s training, you’ll see four Python processes, one on each GPU.",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#train-on-four-gpus",
+    "href": "pages/05-four-gpus.html#train-on-four-gpus",
+    "title": "Scaling to four GPUs",
+    "section": "5.3 Train on four GPUs",
+    "text": "5.3 Train on four GPUs\nThe only thing we change is device=[0, 1, 2, 3].\n\n\nhpc-for-ai.ipynb\n\nmodel = YOLO(WEIGHTS)\n\nstart = time.perf_counter()\nmodel.train(\n    data=str(SPLIT_DIR),\n    epochs=EPOCHS,\n    imgsz=IMG_SIZE,\n    batch=BATCH,  # the total batch is shared out: 64 / 4 = 16 images per GPU\n    workers=WORKERS,\n    device=[0, 1, 2, 3],  # four GPUs\n    project=str(RUNS_DIR),\n    name=\"4gpu\",\n    exist_ok=True,\n    seed=42,\n)\ntime_4gpu = time.perf_counter() - start\nprint(f\"Training on 4 GPUs took {time_4gpu / 60:.1f} minutes\")",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#was-it-faster",
+    "href": "pages/05-four-gpus.html#was-it-faster",
+    "title": "Scaling to four GPUs",
+    "section": "5.4 Was it faster?",
+    "text": "5.4 Was it faster?\n\n\nhpc-for-ai.ipynb\n\ntimings = pd.DataFrame(\n    {\"minutes\": [time_1gpu / 60, time_4gpu / 60]},\n    index=[\"1 GPU\", \"4 GPUs\"],\n)\ntimings[\"speed-up\"] = (time_1gpu / 60 / timings[\"minutes\"]).round(2)\nprint(timings.round(2))\n\nax = timings[\"minutes\"].plot(kind=\"barh\", color=[\"#b895ce\", \"#3d0251\"], title=\"Training time on 1 and 4 GPUs\")\nperfect = ax.axvline(time_1gpu / 60 / 4, color=\"grey\", linestyle=\"--\", label=\"Perfect 4x speed-up\")\nax.bar_label(ax.containers[0], labels=[f\"{s:.1f}x\" for s in timings[\"speed-up\"]], padding=4)\nax.invert_yaxis()\nax.set_xlim(0, timings[\"minutes\"].max() * 1.2)\nplt.xlabel(\"Minutes\")\nplt.legend(handles=[perfect])\nplt.show()\n\nEach bar shows how long a run took, and the number at the end is its speed-up compared with 1 GPU. The dashed line shows where the 4-GPU bar would end if four GPUs were exactly four times faster. The gap between the end of the 4-GPU bar and the dashed line is the time spent on the extra work that comes with using several GPUs.\nIt almost certainly wasn’t four times faster. There are a few reasons for this:\n\nIt takes time to start four processes and connect the GPUs to each other, and for a short training run that’s a large part of the total time.\nAfter every batch, the GPUs have to stop and share their gradients.\nThe CPU workers now have to load images for four GPUs instead of one.\n\nWith a small model and dataset like ours, these costs can cancel out most of the benefit of the extra GPUs. With large models and datasets that take hours or days to train, they matter much less, and more GPUs can make a big difference.",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#is-the-model-just-as-good",
+    "href": "pages/05-four-gpus.html#is-the-model-just-as-good",
+    "title": "Scaling to four GPUs",
+    "section": "5.5 Is the model just as good?",
+    "text": "5.5 Is the model just as good?\n\n\nhpc-for-ai.ipynb\n\ntrue, pred = evaluate(RUNS_DIR / \"4gpu\" / \"weights\" / \"best.pt\")\nprint(classification_report(true, pred, digits=3))\n\nConfusionMatrixDisplay.from_predictions(true, pred, cmap=\"Purples\")\nplt.title(\"4 GPUs: test set\")\nplt.show()\n\nThe results should be close to the 1-GPU model’s, but not exactly the same. The images are shuffled differently and each batch is shared out between the GPUs, so the training doesn’t follow exactly the same path. With only 108 fractures in the test set, a difference of a few fractures found or missed is within normal run-to-run variation.",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#exercise",
+    "href": "pages/05-four-gpus.html#exercise",
+    "title": "Scaling to four GPUs",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise\n\n\n\nFill in this table with the results from the demo:\n\n\n\nRun\nMinutes\nSpeed-up\nFractured recall\n\n\n\n\n1 GPU\n\n1.0\n\n\n\n4 GPUs\n\n\n\n\n\n\n\nHow much faster was the 4-GPU run? Was the speed-up close to 4?\nDid the model get better, get worse or stay about the same?\nWhat do you think would happen with a much bigger model, such as yolov8x-cls.pt?\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nThe numbers will vary from run to run, but this is what usually happens:\n\nThe 4-GPU run should be faster, but not four times faster. In our dry run it was about 2.4 times faster. For a job this small, starting up, sharing gradients and loading data take up a lot of the time.\nAbout the same. Small differences in recall are normal between runs.\nA bigger model does much more calculation for each image, so the GPUs spend more of their time calculating and less time waiting. The speed-up from four GPUs gets closer to four. (You’d need to download the bigger model’s weights first.)",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html",
+    "href": "pages/03-fracatlas.html",
+    "title": "Meet FracAtlas",
+    "section": "",
+    "text": "Section 3 of 7\nBefore training a model, it’s worth spending some time getting to know the data. In this section we’ll load the labels, look at some of the images and split the data into training, validation and test sets. None of this needs a GPU.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#load-the-labels",
+    "href": "pages/03-fracatlas.html#load-the-labels",
+    "title": "Meet FracAtlas",
+    "section": "3.1 Load the labels",
+    "text": "3.1 Load the labels\n\n\nhpc-for-ai.ipynb\n\ndf = pd.read_csv(DATA_DIR / \"dataset.csv\")\nprint(df.shape)\ndf.head()\n\nThere’s one row for each image, and df.shape shows that there are 4,083 rows.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#how-balanced-are-the-classes",
+    "href": "pages/03-fracatlas.html#how-balanced-are-the-classes",
+    "title": "Meet FracAtlas",
+    "section": "3.2 How balanced are the classes?",
+    "text": "3.2 How balanced are the classes?\n\n\nhpc-for-ai.ipynb\n\ncounts = df[\"fractured\"].value_counts().rename({0: \"Not fractured\", 1: \"Fractured\"})\nprint(counts)\nprint(f\"\\n{df['fractured'].mean():.1%} of images show a fracture\")\nprint(f\"{(df['fractured'] == 0).mean():.1%} of images don't show a fracture\")\n\ncounts.plot(kind=\"bar\", color=[\"#b895ce\", \"#3d0251\"], rot=0, title=\"FracAtlas: images per class\")\nplt.xlabel(\"Class\")\nplt.ylabel(\"Number of images\")\nplt.show()\n\nOnly about 1 in 6 of the images shows a fracture. Data like this is called imbalanced, and we have to be careful about how we judge a model trained on it, which we’ll come back to in section 4.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#find-the-image-files",
+    "href": "pages/03-fracatlas.html#find-the-image-files",
+    "title": "Meet FracAtlas",
+    "section": "3.3 Find the image files",
+    "text": "3.3 Find the image files\nThe images are in two folders, images/Fractured and images/Non_fractured. This function works out where each image is from its row in the table, and we add the result as a new column.\n\n\nhpc-for-ai.ipynb\n\ndef image_path(row):\n    folder = \"Fractured\" if row[\"fractured\"] == 1 else \"Non_fractured\"\n    return DATA_DIR / \"images\" / folder / row[\"image_id\"]\n\ndf[\"path\"] = df.apply(image_path, axis=1)\nprint(\"All image files found:\", df[\"path\"].map(Path.exists).all())",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#look-at-some-examples",
+    "href": "pages/03-fracatlas.html#look-at-some-examples",
+    "title": "Meet FracAtlas",
+    "section": "3.4 Look at some examples",
+    "text": "3.4 Look at some examples\n\n\nhpc-for-ai.ipynb\n\nfig, axes = plt.subplots(2, 4, figsize=(14, 7))\nfor row_axes, label, title in zip(axes, [1, 0], [\"Fractured\", \"Not fractured\"]):\n    sample = df[df[\"fractured\"] == label].sample(4, random_state=1)\n    for ax, (_, row) in zip(row_axes, sample.iterrows()):\n        ax.imshow(Image.open(row[\"path\"]), cmap=\"gray\")\n        ax.set_title(f\"{title}\\n{row['image_id']}\", fontsize=9)\n        ax.axis(\"off\")\nplt.tight_layout()\nplt.show()\n\nSome of the fractures are easy to see. Others are hard to find even when you know they’re there.\n\n\n\n\n\n\nA note about this copy of the data\n\n\n\n87 of the non-fractured images in the FracAtlas download are slightly damaged: the end of each file is missing. When these images are opened, some of them show the missing part as a flat grey band along the bottom. Because only non-fractured images have the band, a model could learn that “grey band means not fractured”, which has nothing to do with bones.\nWe’ve cropped the grey bands off and repaired the files in the copy we’re using, and listed the changes in FracAtlas/truncated-images.txt. Problems like this are common in real datasets, so it’s always worth checking your images before training on them.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#how-big-are-the-images",
+    "href": "pages/03-fracatlas.html#how-big-are-the-images",
+    "title": "Meet FracAtlas",
+    "section": "3.5 How big are the images?",
+    "text": "3.5 How big are the images?\n\n\nhpc-for-ai.ipynb\n\nsizes = [Image.open(p).size for p in df[\"path\"].sample(200, random_state=1)]\nsizes = pd.DataFrame(sizes, columns=[\"width\", \"height\"])\nsizes.describe().round()\n\nLook at the widths and heights in the table. The model needs every image to be the same size. When it tests an image, it scales it until the shorter side is 512 pixels, then keeps the middle 512 × 512 square, so for a tall image a little is cut off the top and bottom. During training it also crops and flips the images at random, so the model sees slightly different versions each epoch.\nChoosing the size is a trade-off. Smaller images train faster, but fine details such as hairline fractures can get lost. In our dry run, 224 × 224 pixels with only 10 epochs trained in 30 seconds, but the model found far fewer of the fractures than 512 × 512 pixels with 50 epochs.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#fractures-by-body-region",
+    "href": "pages/03-fracatlas.html#fractures-by-body-region",
+    "title": "Meet FracAtlas",
+    "section": "3.6 Fractures by body region",
+    "text": "3.6 Fractures by body region\n\n\nhpc-for-ai.ipynb\n\nregions = [\"hand\", \"leg\", \"hip\", \"shoulder\"]\nregion_stats = pd.DataFrame(\n    {\n        \"images\": [df[r].sum() for r in regions],\n        \"fractured\": [df.loc[df[r] == 1, \"fractured\"].sum() for r in regions],\n    },\n    index=regions,\n)\nregion_stats[\"% fractured\"] = (100 * region_stats[\"fractured\"] / region_stats[\"images\"]).round(1)\nregion_stats",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#split-the-data",
+    "href": "pages/03-fracatlas.html#split-the-data",
+    "title": "Meet FracAtlas",
+    "section": "3.7 Split the data",
+    "text": "3.7 Split the data\nWe split the images into three sets: training (70%), validation (15%) and test (15%).\n\nThe model learns from the training set.\nAfter each epoch, we check how the model is doing on the validation set.\nWe keep the test set aside until the very end, to see how well the model does on images it has never seen.\n\nstratify=df[\"fractured\"] keeps the same proportion of fractured images in each set, and random_state=42 means we get the same split every time we run the cell.\n\n\nhpc-for-ai.ipynb\n\ntrain_df, temp_df = train_test_split(\n    df, test_size=0.3, stratify=df[\"fractured\"], random_state=42\n)\nval_df, test_df = train_test_split(\n    temp_df, test_size=0.5, stratify=temp_df[\"fractured\"], random_state=42\n)\n\nfor name, part in [(\"train\", train_df), (\"val\", val_df), (\"test\", test_df)]:\n    print(f\"{name:5}: {len(part):4} images, {part['fractured'].mean():.1%} fractured\")\n\n\n\n\n\n\n\nCan images of the same patient end up in different sets?\n\n\n\nWith medical images, all the images of one patient should go in the same set. If they don’t, the model can learn to recognise the patient instead of the fracture, and it will look better on the test set than it really is. This is called data leakage.\nFracAtlas doesn’t include patient IDs (they were removed to protect patients’ privacy), so we can’t do that here. We know from the multiscan column that some body parts were X-rayed from more than one angle, so some of our test images probably have a matching image in the training set. Bear this in mind when you look at the results, and split by patient whenever your own data lets you.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#arrange-the-images-for-the-model",
+    "href": "pages/03-fracatlas.html#arrange-the-images-for-the-model",
+    "title": "Meet FracAtlas",
+    "section": "3.8 Arrange the images for the model",
+    "text": "3.8 Arrange the images for the model\nThe Ultralytics library, which we’ll use to train the model, expects the images to be in one folder per set, with a subfolder for each class:\nfracatlas-split/\n├── train/\n│   ├── fractured/\n│   └── not_fractured/\n├── val/\n│   ├── fractured/\n│   └── not_fractured/\n└── test/\n    ├── fractured/\n    └── not_fractured/\nCopying all 4,083 images for everyone on the course would take a while and waste space. Instead, we make symbolic links (symlinks), which are tiny files that point to the original images in the shared folder. The model reads them as if they were the images themselves.\n\n\nhpc-for-ai.ipynb\n\nCLASS_NAMES = {1: \"fractured\", 0: \"not_fractured\"}\n\nif SPLIT_DIR.exists():\n    shutil.rmtree(SPLIT_DIR)  # start fresh if you re-run this cell (removes the links, not the images)\n\nfor split, part in [(\"train\", train_df), (\"val\", val_df), (\"test\", test_df)]:\n    for _, row in part.iterrows():\n        link = SPLIT_DIR / split / CLASS_NAMES[row[\"fractured\"]] / row[\"image_id\"]\n        link.parent.mkdir(parents=True, exist_ok=True)\n        link.symlink_to(row[\"path\"])\n\nfor split in [\"train\", \"val\", \"test\"]:\n    for class_dir in sorted((SPLIT_DIR / split).iterdir()):\n        print(f\"{split}/{class_dir.name}: {len(list(class_dir.iterdir()))} images\")",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#exercise",
+    "href": "pages/03-fracatlas.html#exercise",
+    "title": "Meet FracAtlas",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise\n\n\n\nAdd a new cell to the notebook to answer these questions:\n\nHow many images show surgical hardware (the hardware column)?\nWhat percentage of those images show a fracture?\nWhy might hardware cause problems for a fracture classifier?\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nwith_hardware = df[df[\"hardware\"] == 1]\nprint(len(with_hardware), \"images show hardware\")\nprint(f\"{with_hardware['fractured'].mean():.1%} of them are fractured\")\nRun the cell to see how many images have hardware, and how many of those are fractured.\nHardware could give the model a shortcut. Plates and screws are bright and easy to spot, and they’re put in after a fracture, so a model might learn that “hardware means fracture” instead of learning what a fracture looks like. Looking for shortcuts like this is an important part of checking whether a medical AI model can be trusted.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/01-why-hpc.html",
+    "href": "pages/01-why-hpc.html",
+    "title": "Why HPC for AI?",
+    "section": "",
+    "text": "Section 1 of 7",
+    "crumbs": [
+      "1  Why HPC for AI?"
+    ]
+  },
+  {
+    "objectID": "pages/01-why-hpc.html#why-cant-i-just-use-my-laptop",
+    "href": "pages/01-why-hpc.html#why-cant-i-just-use-my-laptop",
+    "title": "Why HPC for AI?",
+    "section": "1.1 Why can’t I just use my laptop?",
+    "text": "1.1 Why can’t I just use my laptop?\nTo train a neural network, we show it thousands of examples, many times over, and after each batch we adjust millions of numbers inside the model (its weights) by a small amount. Most of that work is multiplying large grids of numbers together.\n\nCPU: a small number of fast, flexible cores. It’s good at working through a series of different tasks.\nGPU: thousands of simpler cores that all do the same sum on different numbers at once, which is exactly what a neural network needs.\n\nMost laptops have a CPU with only a few cores, and many don’t have a dedicated NVIDIA GPU, which is what most deep learning software is built to use. That’s fine for learning and for small models, but bigger projects soon run into problems. Training can take hours or days, the model or a batch of images might not fit in memory, or you might want to try lots of different settings and not have the time.\nThis is where HPC systems like Isambard-AI come in. They have many nodes, each with several GPUs and plenty of memory, so you can train models that are too big for your laptop, or train the same model many times to find the best settings.",
+    "crumbs": [
+      "1  Why HPC for AI?"
+    ]
+  },
+  {
+    "objectID": "pages/01-why-hpc.html#isambard-ai",
+    "href": "pages/01-why-hpc.html#isambard-ai",
+    "title": "Why HPC for AI?",
+    "section": "1.2 Isambard-AI",
+    "text": "1.2 Isambard-AI\nIsambard-AI is a supercomputer in Bristol, run by the Bristol Centre for Supercomputing (BriCS) as part of the UK’s AI Research Resource. Phase 2 of the system has 1,320 nodes, which are the individual computers that make up the supercomputer. Each node has four NVIDIA GH200 Grace Hopper “superchips”, and each superchip combines a 72-core Grace CPU with an H100 GPU that has 96 GB of memory.",
+    "crumbs": [
+      "1  Why HPC for AI?"
+    ]
+  },
+  {
+    "objectID": "pages/01-why-hpc.html#exercise",
+    "href": "pages/01-why-hpc.html#exercise",
+    "title": "Why HPC for AI?",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise\n\n\n\nThink of a model you’ve trained, or would like to train, in your own work.\n\nRoughly how long does one training run take on the computer you use now?\nWhat limits you most: time, memory, or the number of runs you can do?\nIf a training run took 10 minutes, what would you do differently?\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nThere’s no single right answer, but these are common replies:\n\nTime is the most common limit. If a run takes a day, you can only test one idea a day.\nMemory problems usually show up as “CUDA out of memory” errors, or as having to use smaller images or batches than you’d like.\nWhen runs are faster, most people say they’d try more ideas: other models, other settings and more data. This is often the biggest benefit of HPC.",
+    "crumbs": [
+      "1  Why HPC for AI?"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
     "title": "HPC for AI - Part 1",
-    "section": "Placeholder slides",
-    "text": "Placeholder slides\nReplace this file with the slides used in the session (or point the Slides button in _quarto.yml at your own file)."
-  },
-  {
-    "objectID": "pages/06-good-practice.html",
-    "href": "pages/06-good-practice.html",
-    "title": "Good practice and next steps",
     "section": "",
-    "text": "Section 6 of 7",
+    "text": "4,083 X-rays and four GPUs. Can we teach a computer to spot a fracture?",
     "crumbs": [
-      "6  Good practice"
+      "Home"
     ]
   },
   {
-    "objectID": "pages/06-good-practice.html#first-subsection",
-    "href": "pages/06-good-practice.html#first-subsection",
-    "title": "Good practice and next steps",
-    "section": "6.1 First subsection",
-    "text": "6.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
+    "objectID": "index.html#introduction",
+    "href": "index.html#introduction",
+    "title": "HPC for AI - Part 1",
+    "section": "Introduction",
+    "text": "Introduction\nIn this course you’ll use Isambard-AI, one of the UK’s national supercomputers for AI research, to train a computer vision model.\nTraining a deep learning model means repeating the same calculations over and over, often millions of times. A laptop can manage this for small problems, but it soon gets too slow. Supercomputers like Isambard-AI are built around GPUs (graphics processing units), which can do thousands of these calculations at the same time. During the course you’ll see how much difference a GPU makes, and what happens when you use more than one.\nWe’re going to explore this topic using a case study: training a model to spot bone fractures in X-ray images. A model like this could, with a lot more work, help clinicians decide which scans to look at first. This could be useful for patient triage in an emergency department.\nEach section of the course starts with a question, and in most sections you’ll answer it by running part of a notebook on Isambard-AI:\nWhy HPC? → Isambard-AI → The data → 1 GPU → 4 GPUs → Good practice",
     "crumbs": [
-      "6  Good practice"
+      "Home"
     ]
   },
   {
-    "objectID": "pages/06-good-practice.html#second-subsection",
-    "href": "pages/06-good-practice.html#second-subsection",
-    "title": "Good practice and next steps",
-    "section": "6.2 Second subsection",
-    "text": "6.2 Second subsection\nAdd the content here.",
+    "objectID": "index.html#the-data-fracatlas",
+    "href": "index.html#the-data-fracatlas",
+    "title": "HPC for AI - Part 1",
+    "section": "The data: FracAtlas",
+    "text": "The data: FracAtlas\nFracAtlas is a public dataset of 4,083 X-ray images of hands, legs, hips and shoulders. The images were collected from three hospitals in Bangladesh and labelled by two radiologists, and 719 of them show at least one fracture. They have been anonymised and are shared under a CC BY 4.0 licence.\nThe images come with a file called dataset.csv, which has one row per image. These are the columns we’ll use:\n\n\n\n\n\n\n\nColumn\nDescription\n\n\n\n\nimage_id\nFile name of the image, e.g. IMG0000019.jpg\n\n\nfractured\n1 if the image shows a fracture, 0 if not. This is what we want the model to predict.\n\n\nhand, leg, hip, shoulder\n1 if the image shows that part of the body\n\n\nhardware\n1 if the image shows surgical hardware, such as plates or screws\n\n\nmultiscan\n1 if the same body part was X-rayed from more than one angle",
     "crumbs": [
-      "6  Good practice"
+      "Home"
     ]
   },
   {
-    "objectID": "pages/06-good-practice.html#exercise",
-    "href": "pages/06-good-practice.html#exercise",
-    "title": "Good practice and next steps",
-    "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "objectID": "index.html#how-to-read-this-document",
+    "href": "index.html#how-to-read-this-document",
+    "title": "HPC for AI - Part 1",
+    "section": "How to read this document",
+    "text": "How to read this document\nThe notebook is already written, so you won’t need to type much code. Instead, read each cell before you run it and make sure you know what it’s doing. Once a cell has run, try changing something and running it again; the exercise at the end of each section gives you some ideas. Training the model takes a few minutes each time, so that’s a good moment to ask questions.\nCode from the course notebook is shown in a box with the notebook’s name at the top. You’ll find exactly the same code in one of the notebook’s cells:\n\n\nhpc-for-ai.ipynb\n\nbaseline = (test_df[\"fractured\"] == 0).mean()\nprint(f\"Always guessing 'not fractured' would be {baseline:.1%} accurate\")\n\nCommands to type into a terminal look like this:\n\n\nTerminal\n\nnvidia-smi\n\nThere’s an exercise at the end of each section, in a blue box. The answer is in the yellow box underneath; have a go yourself before you open it. Green boxes sum up the main points of each section.",
     "crumbs": [
-      "6  Good practice"
+      "Home"
     ]
   },
   {
-    "objectID": "pages/04-one-gpu.html",
-    "href": "pages/04-one-gpu.html",
-    "title": "Training on one GPU",
-    "section": "",
-    "text": "Section 4 of 7",
+    "objectID": "index.html#intended-learning-outcomes",
+    "href": "index.html#intended-learning-outcomes",
+    "title": "HPC for AI - Part 1",
+    "section": "Intended learning outcomes",
+    "text": "Intended learning outcomes\nBy the end of this course, you will:\n\nUnderstand when and why AI projects need high-performance computing (HPC).\nBe able to start a JupyterHub session with GPUs on Isambard-AI.\nBe able to prepare an image dataset and train an image classification model on a GPU.\nKnow how to judge a classifier on imbalanced medical data.\nUnderstand how training a model on multiple GPUs works.\nKnow how to work considerately on a shared supercomputer.",
     "crumbs": [
-      "4  Training on one GPU"
+      "Home"
     ]
   },
   {
-    "objectID": "pages/04-one-gpu.html#the-model",
-    "href": "pages/04-one-gpu.html#the-model",
-    "title": "Training on one GPU",
-    "section": "4.1 The model",
-    "text": "4.1 The model\nWe’ll use YOLOv8n-cls, a small image classifier from the Ultralytics library. It’s a convolutional neural network, which picks out edges, textures and shapes in different parts of an image.\nTraining one from scratch would need far more than 4,000 images. Instead we use transfer learning: start from a model that has seen over a million everyday photos (ImageNet), then fine-tune it on X-rays.\n\n\n\n\n\n\nGoing deeper: why does transfer learning work on X-rays?\n\n\n\n\n\nThe early layers of a network learn general features such as edges and textures, which are useful for almost any image. Fine-tuning mostly adjusts the later layers to the new task, so far fewer examples are needed.",
+    "objectID": "index.html#what-this-course-doesnt-cover",
+    "href": "index.html#what-this-course-doesnt-cover",
+    "title": "HPC for AI - Part 1",
+    "section": "What this course doesn’t cover",
+    "text": "What this course doesn’t cover\n\nBatch jobs and Slurm scripts, which are covered in Introduction to HPC.\nTraining across several nodes. For that, see the BriCS Distributed PyTorch Training tutorial.\nHow neural networks work. See Introduction to AI.",
     "crumbs": [
-      "4  Training on one GPU"
-    ]
-  },
-  {
-    "objectID": "pages/04-one-gpu.html#training-settings",
-    "href": "pages/04-one-gpu.html#training-settings",
-    "title": "Training on one GPU",
-    "section": "4.2 Training settings",
-    "text": "4.2 Training settings\nFour settings control the run. You can change them in the exercise.\n\n\nhpc-for-ai.ipynb\n\nEPOCHS   = 50\nIMG_SIZE = 512\nBATCH    = 64\nWORKERS  = 8\n\n\n\n\nSetting\nWhat it means\n\n\n\n\nEPOCHS\nTimes the model sees every training image\n\n\nIMG_SIZE\nWidth and height of the square each image becomes\n\n\nBATCH\nImages seen before the weights are updated\n\n\nWORKERS\nCPU processes loading images so the GPU isn’t waiting",
-    "crumbs": [
-      "4  Training on one GPU"
-    ]
-  },
-  {
-    "objectID": "pages/04-one-gpu.html#train",
-    "href": "pages/04-one-gpu.html#train",
-    "title": "Training on one GPU",
-    "section": "4.3 Train",
-    "text": "4.3 Train\nOpen the GPU dashboard first, then run the cell. Each epoch prints the loss and the validation accuracy.\n\n\nhpc-for-ai.ipynb\n\nmodel = YOLO(WEIGHTS)\nmodel.train(\n    data=str(SPLIT_DIR), epochs=EPOCHS, imgsz=IMG_SIZE,\n    batch=BATCH, workers=WORKERS,\n    device=0,   # one GPU\n    project=str(RUNS_DIR), name=\"1gpu\", seed=42,\n)\n\n\n\n\n\n\n\nWhat the other arguments do\n\n\n\n\n\nproject and name decide where results are saved (runs/1gpu in your scratch folder). seed makes the run repeatable.",
-    "crumbs": [
-      "4  Training on one GPU"
-    ]
-  },
-  {
-    "objectID": "pages/04-one-gpu.html#how-did-training-go",
-    "href": "pages/04-one-gpu.html#how-did-training-go",
-    "title": "Training on one GPU",
-    "section": "4.4 How did training go?",
-    "text": "4.4 How did training go?\nCompare the two loss curves. If training loss keeps falling while validation loss rises, the model is overfitting. That’s why Ultralytics keeps the best epoch as best.pt.",
-    "crumbs": [
-      "4  Training on one GPU"
-    ]
-  },
-  {
-    "objectID": "pages/04-one-gpu.html#test-the-model",
-    "href": "pages/04-one-gpu.html#test-the-model",
-    "title": "Training on one GPU",
-    "section": "4.5 Test the model",
-    "text": "4.5 Test the model\nClassify every test image with best.pt and compare with the real labels. In the confusion matrix, the diagonal is correct. A missed fracture sits in the fractured row, not-fractured column.\n\n\n\n\npredicted fractured\npredicted not\n\n\n\n\nreal fractured\nfound\nmissed\n\n\nreal not\nfalse alarm\ncorrect\n\n\n\n\n\n\n\n\n\nReading the classification report\n\n\n\n\n\n\n\n\nScore\nFor the fractured class\n\n\n\n\nPrecision\nWhen it says “fractured”, how often is it right?\n\n\nRecall\nWhat share of real fractures did it find?\n\n\nF1\nOne score combining the two",
-    "crumbs": [
-      "4  Training on one GPU"
-    ]
-  },
-  {
-    "objectID": "pages/04-one-gpu.html#is-that-accuracy-any-good",
-    "href": "pages/04-one-gpu.html#is-that-accuracy-any-good",
-    "title": "Training on one GPU",
-    "section": "4.6 Is that accuracy any good?",
-    "text": "4.6 Is that accuracy any good?\nMost images show no fracture, so a “model” that always says not fractured would be right over 80% of the time and find nothing. Accuracy alone misleads on imbalanced data.\nFor triage, recall on the fractured class matters most. A missed fracture is worse than a false alarm a clinician can rule out.",
-    "crumbs": [
-      "4  Training on one GPU"
-    ]
-  },
-  {
-    "objectID": "pages/04-one-gpu.html#exercise",
-    "href": "pages/04-one-gpu.html#exercise",
-    "title": "Training on one GPU",
-    "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nWhat is the recall for the fractured class, in plain English?\nHow many real fractures in the test set did the model miss?\nWould you use it to decide which X-rays to look at first?\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nA recall of 0.70 means 70% of fractures were found and 30% missed. Missed fractures are in the fractured row, not_fractured column. Almost certainly not yet: you’d want to know how it does at other hospitals, on each body region, and with a split by patient.",
-    "crumbs": [
-      "4  Training on one GPU"
-    ]
-  },
-  {
-    "objectID": "pages/02-isambard.html",
-    "href": "pages/02-isambard.html",
-    "title": "Getting onto Isambard-AI",
-    "section": "",
-    "text": "Section 2 of 7",
-    "crumbs": [
-      "2  Getting onto Isambard-AI"
-    ]
-  },
-  {
-    "objectID": "pages/02-isambard.html#first-subsection",
-    "href": "pages/02-isambard.html#first-subsection",
-    "title": "Getting onto Isambard-AI",
-    "section": "2.1 First subsection",
-    "text": "2.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
-    "crumbs": [
-      "2  Getting onto Isambard-AI"
-    ]
-  },
-  {
-    "objectID": "pages/02-isambard.html#second-subsection",
-    "href": "pages/02-isambard.html#second-subsection",
-    "title": "Getting onto Isambard-AI",
-    "section": "2.2 Second subsection",
-    "text": "2.2 Second subsection\nAdd the content here.",
-    "crumbs": [
-      "2  Getting onto Isambard-AI"
-    ]
-  },
-  {
-    "objectID": "pages/02-isambard.html#exercise",
-    "href": "pages/02-isambard.html#exercise",
-    "title": "Getting onto Isambard-AI",
-    "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
-    "crumbs": [
-      "2  Getting onto Isambard-AI"
+      "Home"
     ]
   },
   {
@@ -181,199 +324,229 @@
     "href": "pages/00-before.html#what-youll-need",
     "title": "Before the course",
     "section": "0.1 What you’ll need",
-    "text": "0.1 What you’ll need\n\nAn Isambard-AI account that has been added to the course project. We’ll email you an invitation before the course.\nA UNIX username, set in the BriCS portal. JupyterHub won’t start without one.\nA web browser. Everything happens in the browser, so you don’t need to install anything.",
+    "text": "0.1 What you’ll need\n\nAn Isambard-AI account that has been added to the course project. We’ll email you an invitation before the course; accept it and follow the steps in the email.\nA UNIX username, set in the BriCS portal. JupyterHub won’t start without one. There are instructions in Setting your UNIX username.\nA web browser. Everything happens in the browser, so you don’t need to install anything.\n\nIf you can, please check that you can log in to the BriCS portal before the day.",
     "crumbs": [
       "0  Before the course"
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "HPC for AI - Part 1",
+    "objectID": "pages/02-isambard.html",
+    "href": "pages/02-isambard.html",
+    "title": "Getting onto Isambard-AI",
     "section": "",
-    "text": "Can we teach a computer to spot a fracture?",
+    "text": "Section 2 of 7\nOn a supercomputer, you don’t run your code on the computer you log in to. Instead, you ask a scheduler for the resources you need, and it finds a free compute node for you. The scheduler on Isambard-AI is called Slurm. JupyterHub talks to Slurm for us and then opens JupyterLab in the browser, running on the node Slurm found.",
     "crumbs": [
-      "Home"
+      "2  Getting onto Isambard-AI"
     ]
   },
   {
-    "objectID": "index.html#about-this-course",
-    "href": "index.html#about-this-course",
-    "title": "HPC for AI - Part 1",
-    "section": "About this course",
-    "text": "About this course\nUse the menu on the left to move between sections, or the Present switch in the top bar to show a section as slides. The slides used in the session, the notebook and the setup notes are linked at the top of the menu.",
+    "objectID": "pages/02-isambard.html#start-a-session",
+    "href": "pages/02-isambard.html#start-a-session",
+    "title": "Getting onto Isambard-AI",
+    "section": "2.1 Start a session",
+    "text": "2.1 Start a session\n\nGo to https://apps.isambard.ac.uk/aip2-jupyter and log in.\nFill in the Server Options form:\n\n\n\n\n\n\n\n\nField\nWhat to choose\n\n\n\n\nProject\nThe course project (we’ll tell you its name)\n\n\nJob duration\nThe shortest option that lasts until the end of the course\n\n\nNumber of GH200s\n1\n\n\nPartition\nLeave this empty\n\n\nReservation\ninteractive\n\n\n\n\nClick Start. You might see “Pending in queue” while Slurm finds you a node. This is usually quick, but it can take longer if the interactive nodes are busy. JupyterLab opens in your browser once the node is ready.\n\n\n\n\n\n\n\nYour session has a time limit\n\n\n\nWhen the time you chose runs out, the session ends straight away, with no warning. Save your notebook regularly (Ctrl+S or Cmd+S).",
     "crumbs": [
-      "Home"
+      "2  Getting onto Isambard-AI"
     ]
   },
   {
-    "objectID": "index.html#learning-outcomes",
-    "href": "index.html#learning-outcomes",
-    "title": "HPC for AI - Part 1",
-    "section": "Learning outcomes",
-    "text": "Learning outcomes\nBy the end of this course, you will:\n\nUnderstand when and why AI projects need high-performance computing (HPC).\nBe able to start a JupyterHub session with GPUs on Isambard-AI.\nBe able to prepare an image dataset and train an image classification model on a GPU.\nKnow how to judge a classifier on imbalanced medical data.\nUnderstand how training a model on multiple GPUs works.\nKnow how to work considerately on a shared supercomputer.",
+    "objectID": "pages/02-isambard.html#set-up-the-course-kernel",
+    "href": "pages/02-isambard.html#set-up-the-course-kernel",
+    "title": "Getting onto Isambard-AI",
+    "section": "2.2 Set up the course kernel",
+    "text": "2.2 Set up the course kernel\nThe kernel is the Python environment your notebook runs in. We’ve made one especially for this course, with PyTorch and all the other packages installed, and you need to tell JupyterLab to use it. You only have to do this once.\nIn JupyterLab, open a terminal (File → New → Terminal) and run:\n\n\nTerminal\n\n$PROJECTDIR/hpc-ai-1/venv/bin/python -m ipykernel install --user --name hpc-ai-1 --display-name \"Python (HPC for AI part 1)\"\n\nThen copy the course notebook into your home folder:\n\n\nTerminal\n\ncp $PROJECTDIR/hpc-ai-1/hpc-for-ai.ipynb ~/\n\nOpen hpc-for-ai.ipynb from the file browser on the left. The kernel name in the top right of the notebook should say “Python (HPC for AI part 1)”. If it says something else, click on it and choose that kernel from the list.",
     "crumbs": [
-      "Home"
+      "2  Getting onto Isambard-AI"
     ]
   },
   {
-    "objectID": "pages/01-why-hpc.html",
-    "href": "pages/01-why-hpc.html",
-    "title": "Why HPC for AI?",
-    "section": "",
-    "text": "Section 1 of 7",
+    "objectID": "pages/02-isambard.html#check-your-gpus",
+    "href": "pages/02-isambard.html#check-your-gpus",
+    "title": "Getting onto Isambard-AI",
+    "section": "2.3 Check your GPUs",
+    "text": "2.3 Check your GPUs\nRun the first two cells of the notebook. The first one loads the libraries we need:\n\n\nhpc-for-ai.ipynb\n\nimport os\nimport shutil\nimport time\nfrom pathlib import Path\n\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport torch\nfrom IPython.display import Image as ShowImage\nfrom IPython.display import display\nfrom PIL import Image\nfrom sklearn.metrics import ConfusionMatrixDisplay, classification_report\nfrom sklearn.model_selection import train_test_split\n\n# Isambard-AI's compute nodes can't reach the internet, so tell Ultralytics\n# not to try downloading anything. This must be set before importing it.\nos.environ[\"YOLO_OFFLINE\"] = \"1\"\n\n# Lets training give the same result each time. It has to be set before the\n# GPU is first used, which is why it's here at the top.\nos.environ[\"CUBLAS_WORKSPACE_CONFIG\"] = \":4096:8\"\n\nfrom ultralytics import YOLO\n\n\n\n\n\n\n\nGoing deeper: the two environment variables\n\n\n\n\n\nThe cell sets two environment variables, which are settings that libraries read when they start up.\n\nYOLO_OFFLINE tells Ultralytics not to try downloading anything (it normally checks for updates and downloads a font and some extra model files). Without it, you’d see warnings about failed downloads, and training would take a little longer to start.\nCUBLAS_WORKSPACE_CONFIG is needed for training to give exactly the same result each time it runs with the same settings. It has to be set before the GPU is first used, otherwise PyTorch prints a long warning during training.\n\n\n\n\nThe second cell asks PyTorch which GPUs it can see. It should find one, with a name like NVIDIA GH200.\n\n\nhpc-for-ai.ipynb\n\nprint(\"PyTorch version:\", torch.__version__)\nprint(\"CUDA available: \", torch.cuda.is_available())\nprint(\"Number of GPUs: \", torch.cuda.device_count())\nfor i in range(torch.cuda.device_count()):\n    print(f\"  GPU {i}: {torch.cuda.get_device_name(i)}\")\n\nYou can also see the GPUs from the terminal with nvidia-smi (the NVIDIA System Management Interface), which lists each GPU, how much of its memory is in use and what’s running on it:\n\n\nTerminal\n\nnvidia-smi\n\nJupyterLab on Isambard-AI also has a GPU dashboard. Click the GPU icon in the left-hand sidebar, open the GPU Utilization and GPU Memory panels, and keep them somewhere you can see them. You’ll use them to watch the GPUs while the model trains.",
     "crumbs": [
-      "1  Why HPC for AI?"
+      "2  Getting onto Isambard-AI"
     ]
   },
   {
-    "objectID": "pages/01-why-hpc.html#first-subsection",
-    "href": "pages/01-why-hpc.html#first-subsection",
-    "title": "Why HPC for AI?",
-    "section": "1.1 First subsection",
-    "text": "1.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
+    "objectID": "pages/02-isambard.html#your-first-gpu-job",
+    "href": "pages/02-isambard.html#your-first-gpu-job",
+    "title": "Getting onto Isambard-AI",
+    "section": "2.4 Your first GPU job",
+    "text": "2.4 Your first GPU job\nTo see how much faster a GPU is, the next cell multiplies two large matrices (8,192 × 8,192 numbers each), first on the CPU and then on a GPU, and times both.\n\n\nhpc-for-ai.ipynb\n\nsize = 8192\na = torch.randn(size, size)\nb = torch.randn(size, size)\n\n# On the CPU\nstart = time.perf_counter()\na @ b\ncpu_time = time.perf_counter() - start\n\n# On GPU 0\na_gpu = a.to(\"cuda\")\nb_gpu = b.to(\"cuda\")\na_gpu @ b_gpu  # warm-up: the first call includes one-off set-up costs\ntorch.cuda.synchronize()\nstart = time.perf_counter()\na_gpu @ b_gpu\ntorch.cuda.synchronize()  # wait for the GPU to finish before stopping the clock\ngpu_time = time.perf_counter() - start\n\nprint(f\"CPU: {cpu_time:.3f} s\")\nprint(f\"GPU: {gpu_time:.4f} s\")\nprint(f\"The GPU was {cpu_time / gpu_time:.0f}x faster\")\n\nA couple of lines need explaining:\n\n.to(\"cuda\") copies the numbers from the CPU’s memory into the GPU’s memory. CUDA is NVIDIA’s platform for running code on its GPUs.\ntorch.cuda.synchronize() waits for the GPU to finish. Python doesn’t wait for the GPU by default; it carries on as soon as it has sent the work. Without this line we’d be timing how long it took to send the work, rather than how long it took to do it.\n\nWe also run the multiplication once on the GPU before we start timing. The first thing you do on a GPU is slower than usual because of one-off setup, and we don’t want that in our timing.",
     "crumbs": [
-      "1  Why HPC for AI?"
+      "2  Getting onto Isambard-AI"
     ]
   },
   {
-    "objectID": "pages/01-why-hpc.html#second-subsection",
-    "href": "pages/01-why-hpc.html#second-subsection",
-    "title": "Why HPC for AI?",
-    "section": "1.2 Second subsection",
-    "text": "1.2 Second subsection\nAdd the content here.",
+    "objectID": "pages/02-isambard.html#where-things-live",
+    "href": "pages/02-isambard.html#where-things-live",
+    "title": "Getting onto Isambard-AI",
+    "section": "2.5 Where things live",
+    "text": "2.5 Where things live\nIsambard-AI has several places to store files. We’ll use three of them:\n\n\n\n\n\n\n\n\nLocation\nWhat it is\nWhat we use it for\n\n\n\n\n$PROJECTDIR\nShared by everyone in the project. Not backed up.\nThe dataset, model weights and course kernel. You can read these but not change them.\n\n\n$SCRATCHDIR\nYour own working space. Not backed up.\nEverything you create, including the data split and your trained models.\n\n\n$HOME\nYour home folder, limited to 100 GiB. Not backed up.\nYour copy of the notebook.\n\n\n\nThe compute nodes on Isambard-AI can’t connect to the internet, so everything the notebook needs, including the dataset and the model weights, has been downloaded in advance into the project folder. The next cell sets up the paths to these files, and to your own working folder. It should print True for both the dataset and the model weights.\n\n\nhpc-for-ai.ipynb\n\n# Shared course files (read-only for you)\nCOURSE_DIR = Path(os.environ.get(\"PROJECTDIR\", \"/projects/b6er\")) / \"hpc-ai-1\"\nDATA_DIR = COURSE_DIR / \"FracAtlas\"\nWEIGHTS = COURSE_DIR / \"weights\" / \"yolov8n-cls.pt\"\n\n# Your own working folder\nWORK_DIR = Path(os.environ.get(\"SCRATCHDIR\", Path.home())) / \"hpc-ai-1\"\nSPLIT_DIR = WORK_DIR / \"fracatlas-split\"\nRUNS_DIR = WORK_DIR / \"runs\"\nWORK_DIR.mkdir(parents=True, exist_ok=True)\n\nprint(\"Dataset found:      \", DATA_DIR.exists(), \"-\", DATA_DIR)\nprint(\"Model weights found:\", WEIGHTS.exists(), \"-\", WEIGHTS)\nprint(\"Your work folder:   \", WORK_DIR)",
     "crumbs": [
-      "1  Why HPC for AI?"
+      "2  Getting onto Isambard-AI"
     ]
   },
   {
-    "objectID": "pages/01-why-hpc.html#exercise",
-    "href": "pages/01-why-hpc.html#exercise",
-    "title": "Why HPC for AI?",
+    "objectID": "pages/02-isambard.html#exercise",
+    "href": "pages/02-isambard.html#exercise",
+    "title": "Getting onto Isambard-AI",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise\n\n\n\n\nRun nvidia-smi in a terminal. How much memory does your GPU have, and how much is being used?\nChange size to 16384 in the matrix multiplication cell and run it again. Each matrix now has four times as many numbers. How do the CPU and GPU times change?\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\n\nYour session has one GPU, with about 96 GB of memory (nvidia-smi shows it in MiB). Once you’ve run the matrix multiplication cell, it shows some memory in use by your notebook.\nMultiplying two n × n matrices takes roughly n³ operations, so doubling size means about 8 times as much work. The CPU time goes up a lot. The GPU time goes up much less, because the GPU has more work to spread across its cores, so the gap between the two usually gets bigger. Your exact numbers will be different.",
     "crumbs": [
-      "1  Why HPC for AI?"
+      "2  Getting onto Isambard-AI"
     ]
   },
   {
-    "objectID": "pages/03-fracatlas.html",
-    "href": "pages/03-fracatlas.html",
-    "title": "Meet FracAtlas",
+    "objectID": "pages/04-one-gpu.html",
+    "href": "pages/04-one-gpu.html",
+    "title": "Training on one GPU",
     "section": "",
-    "text": "Section 3 of 7",
+    "text": "Section 4 of 7",
     "crumbs": [
-      "3  Meet FracAtlas"
+      "4  Training on one GPU"
     ]
   },
   {
-    "objectID": "pages/03-fracatlas.html#first-subsection",
-    "href": "pages/03-fracatlas.html#first-subsection",
-    "title": "Meet FracAtlas",
-    "section": "3.1 First subsection",
-    "text": "3.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
+    "objectID": "pages/04-one-gpu.html#the-model",
+    "href": "pages/04-one-gpu.html#the-model",
+    "title": "Training on one GPU",
+    "section": "4.1 The model",
+    "text": "4.1 The model\nWe’ll use YOLOv8n-cls, a small image classification model from the Ultralytics library. It’s a convolutional neural network, a type of neural network that picks out patterns such as edges, textures and shapes in different parts of an image.\nTo train a model like this from scratch, we’d need far more than 4,000 images. Instead we use transfer learning. We start with a model that has already been trained on more than a million everyday photos (the ImageNet dataset), so it has already learned to recognise general visual patterns, and then we fine-tune it on our X-rays.",
     "crumbs": [
-      "3  Meet FracAtlas"
+      "4  Training on one GPU"
     ]
   },
   {
-    "objectID": "pages/03-fracatlas.html#second-subsection",
-    "href": "pages/03-fracatlas.html#second-subsection",
-    "title": "Meet FracAtlas",
-    "section": "3.2 Second subsection",
-    "text": "3.2 Second subsection\nAdd the content here.",
+    "objectID": "pages/04-one-gpu.html#training-settings",
+    "href": "pages/04-one-gpu.html#training-settings",
+    "title": "Training on one GPU",
+    "section": "4.2 Training settings",
+    "text": "4.2 Training settings\n\n\nhpc-for-ai.ipynb\n\nEPOCHS = 50\nIMG_SIZE = 512\nBATCH = 64\nWORKERS = 8\n\n\n\n\n\n\n\n\nSetting\nWhat it means\n\n\n\n\nEPOCHS\nThe number of times the model sees every training image.\n\n\nIMG_SIZE\nThe width and height, in pixels, of the square each image is turned into.\n\n\nBATCH\nThe number of images the model looks at before it updates its weights.\n\n\nWORKERS\nThe number of CPU processes loading images in the background, so the GPU doesn’t have to wait for them.",
     "crumbs": [
-      "3  Meet FracAtlas"
+      "4  Training on one GPU"
     ]
   },
   {
-    "objectID": "pages/03-fracatlas.html#exercise",
-    "href": "pages/03-fracatlas.html#exercise",
-    "title": "Meet FracAtlas",
+    "objectID": "pages/04-one-gpu.html#train",
+    "href": "pages/04-one-gpu.html#train",
+    "title": "Training on one GPU",
+    "section": "4.3 Train",
+    "text": "4.3 Train\nOpen the GPU dashboard before you run the next cell so that you can watch the GPU while the model trains.\n\n\nhpc-for-ai.ipynb\n\nmodel = YOLO(WEIGHTS)\n\nstart = time.perf_counter()\nmodel.train(\n    data=str(SPLIT_DIR),\n    epochs=EPOCHS,\n    imgsz=IMG_SIZE,\n    batch=BATCH,\n    workers=WORKERS,\n    device=0,  # one GPU\n    project=str(RUNS_DIR),\n    name=\"1gpu\",\n    exist_ok=True,\n    seed=42,\n)\ntime_1gpu = time.perf_counter() - start\nprint(f\"Training on 1 GPU took {time_1gpu / 60:.1f} minutes\")\n\ndevice=0 tells Ultralytics to use GPU 0 only. project and name tell it where to save the results, which in this case is runs/1gpu in your scratch folder.\nWhile it’s training, Ultralytics prints a line for each epoch with the loss, which measures how wrong the model is on the training images, and the accuracy on the validation set. The loss should go down and the accuracy should go up.",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#how-did-training-go",
+    "href": "pages/04-one-gpu.html#how-did-training-go",
+    "title": "Training on one GPU",
+    "section": "4.4 How did training go?",
+    "text": "4.4 How did training go?\nUltralytics saves some plots of the training run in the run’s folder. This cell shows the main one.\n\n\nhpc-for-ai.ipynb\n\nrun_1gpu = RUNS_DIR / \"1gpu\"\ndisplay(ShowImage(filename=str(run_1gpu / \"results.png\"), width=800))\n\nCompare the two loss plots. If the training loss keeps falling but the validation loss starts to rise, the model is overfitting: it’s learning details of the training images that don’t help with new ones. You may see this towards the end of our run. This is one reason Ultralytics saves the epoch that did best on the validation set as best.pt, as well as the final one.\n\n\n\n\n\n\nGoing deeper: the training plots\n\n\n\n\n\nEach small plot shows one measurement, with the epoch number along the bottom. The blue line is the value at each epoch, and the dotted orange line is a smoothed version that makes the trend easier to see.\n\n\n\n\n\n\n\n\nPlot\nWhat it shows\nWhat you want to see\n\n\n\n\ntrain/loss\nHow wrong the model is on the training images\nGoing down\n\n\nval/loss\nHow wrong the model is on the validation images, which it doesn’t learn from\nGoing down, then levelling off\n\n\nmetrics/accuracy_top1\nThe proportion of validation images the model classifies correctly\nGoing up, then levelling off\n\n\nmetrics/accuracy_top5\nWhether the right answer is in the model’s top five guesses\nIgnore it: with only two classes, it’s always 1",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#test-the-model",
+    "href": "pages/04-one-gpu.html#test-the-model",
+    "title": "Training on one GPU",
+    "section": "4.5 Test the model",
+    "text": "4.5 Test the model\nThe version of the model that did best on the validation set is saved as best.pt. We load it, ask it to classify every image in the test set, and compare its answers with the real labels. * in the path means “anything”, so test/*/*.jpg matches every image in both class folders. The folder each image is in tells us its real label.\n\n\nhpc-for-ai.ipynb\n\ndef evaluate(weights):\n    \"\"\"Classify every test image and return the true and predicted labels.\"\"\"\n    model = YOLO(weights)\n    true, pred = [], []\n    test_images = str(SPLIT_DIR / \"test\" / \"*\" / \"*.jpg\")  # every image in every class folder\n    for result in model.predict(test_images, imgsz=IMG_SIZE, stream=True, verbose=False):\n        true.append(Path(result.path).parent.name)  # the folder name is the true label\n        pred.append(result.names[result.probs.top1])  # the class the model thinks is most likely\n    return true, pred\n\ntrue, pred = evaluate(run_1gpu / \"weights\" / \"best.pt\")\nprint(classification_report(true, pred, digits=3))\n\nConfusionMatrixDisplay.from_predictions(true, pred, cmap=\"Purples\")\nplt.title(\"1 GPU: test set\")\nplt.show()\n\nclassification_report gives three scores for each class:\n\n\n\n\n\n\n\nScore\nWhat it tells us about the fractured class\n\n\n\n\nPrecision\nWhen the model says “fractured”, how often is it right?\n\n\nRecall\nWhat proportion of the real fractures did the model find? This is also called sensitivity.\n\n\nF1-score\nA single score that combines precision and recall.\n\n\nSupport\nHow many images of that class are in the test set.\n\n\n\n\n\n\n\n\n\nGoing deeper: the summary rows and the confusion matrix\n\n\n\n\n\nThe rows at the bottom of the report summarise both classes:\n\n\n\n\n\n\n\nRow\nWhat it means\n\n\n\n\naccuracy\nThe proportion of all test images the model classified correctly.\n\n\nmacro avg\nThe plain average of the two classes’ scores, so each class counts equally.\n\n\nweighted avg\nThe average weighted by support. There are many more not_fractured images, so this is close to the not_fractured scores.\n\n\n\nBelow the report is a confusion matrix, which compares the model’s answers with the real labels. The real label is up the side and the model’s answer is along the bottom, and each box shows a number of images. The correct answers are on the diagonal, from top left to bottom right. The missed fractures are in the fractured row, not_fractured column, and the false alarms are in the not_fractured row, fractured column.",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#is-that-accuracy-any-good",
+    "href": "pages/04-one-gpu.html#is-that-accuracy-any-good",
+    "title": "Training on one GPU",
+    "section": "4.6 Is that accuracy any good?",
+    "text": "4.6 Is that accuracy any good?\n\n\nhpc-for-ai.ipynb\n\nbaseline = (test_df[\"fractured\"] == 0).mean()\nprint(f\"Always guessing 'not fractured' would be {baseline:.1%} accurate\")\n\nMost of the images don’t show a fracture, so a “model” that always said “not fractured” would be right over 80% of the time, and it wouldn’t find a single fracture. That’s why accuracy on its own can be misleading when the data is imbalanced.\nIf we wanted to use this model to decide which scans to look at first, the most important score would be the recall for the fractured class. Missing a fracture is worse than a false alarm that a clinician can check and rule out.",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#exercise",
+    "href": "pages/04-one-gpu.html#exercise",
+    "title": "Training on one GPU",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise\n\n\n\nLook at the classification report and confusion matrix for your 1-GPU model.\n\nWhat is the model’s recall for the fractured class? What does that number mean in plain English?\nHow many of the real fractures in the test set did the model miss?\nWould you be happy using this model to decide which X-rays to look at first? What would you want to know before you did?\n\nIf you have time: change IMG_SIZE to 224 in the settings cell, then run the training and testing cells again. How do the training time and recall change?\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\n\nLook at the recall value in the fractured row. A recall of 0.70, for example, means the model found 70% of the fractures in the test set and missed the other 30%.\nIn the confusion matrix, the missed fractures are the images where the true label is fractured but the predicted label is not_fractured.\nAlmost certainly not yet. You’d want to know, for example, how well it works on X-rays from other hospitals and for each body region, whether it’s taking shortcuts such as spotting hardware, how it does with a proper split by patient, and whether it actually helps in a clinical study. A model like this would only ever support a clinician’s decision, not replace it.\n\nTraining should be quite a bit faster with smaller images. Recall may drop, because fine details such as hairline fractures can be lost when the image is made smaller, but with only 108 fractures in the test set, a small difference could just be chance. Remember to set IMG_SIZE back to 512 afterwards.",
     "crumbs": [
-      "3  Meet FracAtlas"
+      "4  Training on one GPU"
     ]
   },
   {
-    "objectID": "pages/05-four-gpus.html",
-    "href": "pages/05-four-gpus.html",
-    "title": "Scaling to four GPUs",
+    "objectID": "pages/06-good-practice.html",
+    "href": "pages/06-good-practice.html",
+    "title": "Good practice and next steps",
     "section": "",
-    "text": "Section 5 of 7",
+    "text": "Section 6 of 7\nIsambard-AI is used by researchers all over the UK. These habits help it work well for everyone, including you.",
     "crumbs": [
-      "5  Scaling to four GPUs"
+      "6  Good practice"
     ]
   },
   {
-    "objectID": "pages/05-four-gpus.html#first-subsection",
-    "href": "pages/05-four-gpus.html#first-subsection",
-    "title": "Scaling to four GPUs",
-    "section": "5.1 First subsection",
-    "text": "5.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
+    "objectID": "pages/06-good-practice.html#look-after-your-session",
+    "href": "pages/06-good-practice.html#look-after-your-session",
+    "title": "Good practice and next steps",
+    "section": "6.1 Look after your session",
+    "text": "6.1 Look after your session\nCheck how much time your session has left by running this in a terminal:\n\n\nTerminal\n\nsqueue --me --partition=interactive --name=\"spawner-jupyterhub\" --format=\"%.10M %.10L\"\n\nTIME is how long your session has been running and TIME_LEFT is how long it has left. You need --partition=interactive because sessions in the interactive reservation don’t show up in squeue --me on its own.\nRemember that the session ends without any warning, so save your work regularly. When you’ve finished, stop your server by going to File → Hub Control Panel and clicking Stop My Server. Until you do, the GPUs stay reserved for you even if you aren’t using them, and they count against your project’s allocation.",
     "crumbs": [
-      "5  Scaling to four GPUs"
+      "6  Good practice"
     ]
   },
   {
-    "objectID": "pages/05-four-gpus.html#second-subsection",
-    "href": "pages/05-four-gpus.html#second-subsection",
-    "title": "Scaling to four GPUs",
-    "section": "5.2 Second subsection",
-    "text": "5.2 Second subsection\nAdd the content here.",
+    "objectID": "pages/06-good-practice.html#look-after-your-data",
+    "href": "pages/06-good-practice.html#look-after-your-data",
+    "title": "Good practice and next steps",
+    "section": "6.2 Look after your data",
+    "text": "6.2 Look after your data\nNone of the storage on Isambard-AI is backed up, including $HOME, $SCRATCHDIR and $PROJECTDIR, so copy anything important somewhere safe.\n\nPut large datasets in $PROJECTDIR, so everyone in the project can share one copy, as we did with FracAtlas.\nKeep working files, such as checkpoints and outputs, in $SCRATCHDIR rather than $HOME, which is limited to 100 GiB.",
     "crumbs": [
-      "5  Scaling to four GPUs"
+      "6  Good practice"
     ]
   },
   {
-    "objectID": "pages/05-four-gpus.html#exercise",
-    "href": "pages/05-four-gpus.html#exercise",
-    "title": "Scaling to four GPUs",
+    "objectID": "pages/06-good-practice.html#use-the-gpus-well",
+    "href": "pages/06-good-practice.html#use-the-gpus-well",
+    "title": "Good practice and next steps",
+    "section": "6.3 Use the GPUs well",
+    "text": "6.3 Use the GPUs well\n\nKeep an eye on the GPU dashboard. If a GPU is idle a lot of the time, adding more GPUs won’t help. Try more data-loading workers, a bigger batch or a bigger model instead.\nStart small. Test your code on one GPU for a few epochs before you ask for more.\nOnly ask for what you need. If your job only uses one GPU, ask for one GH200 rather than four.",
+    "crumbs": [
+      "6  Good practice"
+    ]
+  },
+  {
+    "objectID": "pages/06-good-practice.html#when-to-move-on-from-notebooks",
+    "href": "pages/06-good-practice.html#when-to-move-on-from-notebooks",
+    "title": "Good practice and next steps",
+    "section": "6.4 When to move on from notebooks",
+    "text": "6.4 When to move on from notebooks\nNotebooks are good for exploring data and learning, but they’re not ideal for long training runs. The session has a time limit, and if your browser or internet connection drops, you can lose track of where you were.\nFor real projects, the next step is to put your training code into a Python script and submit it to Slurm as a batch job. A batch job runs on its own, even after you’ve logged out, and you can queue up lots of runs at once. Our Introduction to HPC course covers how to do this.",
+    "crumbs": [
+      "6  Good practice"
+    ]
+  },
+  {
+    "objectID": "pages/06-good-practice.html#where-to-go-next",
+    "href": "pages/06-good-practice.html#where-to-go-next",
+    "title": "Good practice and next steps",
+    "section": "6.5 Where to go next",
+    "text": "6.5 Where to go next\n\nIntroduction to HPC covers scripts, batch jobs and Slurm.\nThe Isambard-AI documentation, including the JupyterHub guide.\nThe BriCS Distributed PyTorch Training tutorial shows how to train across several nodes.\nThe Ultralytics image classification documentation.\nApplying for access to Isambard-AI for your own project.",
+    "crumbs": [
+      "6  Good practice"
+    ]
+  },
+  {
+    "objectID": "pages/06-good-practice.html#exercise",
+    "href": "pages/06-good-practice.html#exercise",
+    "title": "Good practice and next steps",
     "section": "Exercise",
-    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "text": "Exercise\n\n\n\n\n\n\nExercise\n\n\n\n\nRun the squeue command above in a terminal. How long does your session have left?\nRun du -sh $SCRATCHDIR/hpc-ai-1 to see how much space your work takes up. Why is it so small when there are 4,083 images?\nStop your server.\n\n\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\n\nThe TIME_LEFT column shows the time remaining, in hours, minutes and seconds.\nYour split folder only contains symbolic links, not copies of the images, so it takes up almost no space. Most of the space is taken up by the trained models in runs/.\nGo to File → Hub Control Panel and click Stop My Server.",
     "crumbs": [
-      "5  Scaling to four GPUs"
-    ]
-  },
-  {
-    "objectID": "pages/07-credits.html",
-    "href": "pages/07-credits.html",
-    "title": "Credits, acknowledgements and references",
-    "section": "",
-    "text": "Section 7 of 7",
-    "crumbs": [
-      "7  Credits and references"
-    ]
-  },
-  {
-    "objectID": "pages/07-credits.html#credits",
-    "href": "pages/07-credits.html#credits",
-    "title": "Credits, acknowledgements and references",
-    "section": "Credits",
-    "text": "Credits\nDeveloped by the Jean Golding Institute, University of Bristol. Based on Evie Grace’s Radiograph-Reader project.",
-    "crumbs": [
-      "7  Credits and references"
-    ]
-  },
-  {
-    "objectID": "pages/07-credits.html#acknowledgements",
-    "href": "pages/07-credits.html#acknowledgements",
-    "title": "Credits, acknowledgements and references",
-    "section": "Acknowledgements",
-    "text": "Acknowledgements\nComputing time on Isambard-AI is provided by the Bristol Centre for Supercomputing (BriCS) as part of the UK AI Research Resource.",
-    "crumbs": [
-      "7  Credits and references"
-    ]
-  },
-  {
-    "objectID": "pages/07-credits.html#references",
-    "href": "pages/07-credits.html#references",
-    "title": "Credits, acknowledgements and references",
-    "section": "References",
-    "text": "References\nAbedeen, I., Rahman, M. A., Prottyasha, F. Z., Ahmed, T., Chowdhury, T. M. & Shatabda, S. (2023). FracAtlas: A Dataset for Fracture Classification, Localization and Segmentation of Musculoskeletal Radiographs. Scientific Data, 10, 521. https://doi.org/10.1038/s41597-023-02432-4\nThe dataset is available from figshare under a CC BY 4.0 licence.",
-    "crumbs": [
-      "7  Credits and references"
+      "6  Good practice"
     ]
   }
 ]

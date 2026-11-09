@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -177,7 +211,7 @@ ul.task-list li input[type="checkbox"] {
 <p>How do I get a GPU?</p>
 </div>
 <div class="section-meta">
-<p>About 20 min · 1 exercise</p>
+<p>1 exercise</p>
 </div>
 <div class="key-points callout callout-style-default callout-tip callout-titled" title="In short">
 <div class="callout-header d-flex align-content-center">
@@ -190,55 +224,273 @@ In short
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>First key point.</li>
-<li>Second key point.</li>
-<li>Third key point.</li>
+<li>JupyterHub asks the Slurm scheduler for GPUs and opens JupyterLab on a compute node.</li>
+<li>Your session ends with no warning when its time runs out, so save regularly.</li>
+<li>You can see what the GPUs are doing with <code>nvidia-smi</code> or the GPU dashboard.</li>
+<li>Shared data goes in <code>$PROJECTDIR</code> and your own working files go in <code>$SCRATCHDIR</code>. Neither is backed up.</li>
 </ul>
 </div>
 </div>
-<section id="first-subsection" class="level2">
-<h2 class="anchored" data-anchor-id="first-subsection">2.1 First subsection</h2>
-<p>A few sentences, one code cell and at most one figure.</p>
-<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: optional detail">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Going deeper: optional detail
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Longer explanations go in a folded box like this one.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="second-subsection" class="level2">
-<h2 class="anchored" data-anchor-id="second-subsection">2.2 Second subsection</h2>
-<p>Add the content here.</p>
-</section>
-<section id="exercise" class="level2">
-<h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
-<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise · 10 min">
+<p>On a supercomputer, you don’t run your code on the computer you log in to. Instead, you ask a scheduler for the resources you need, and it finds a free compute node for you. The scheduler on Isambard-AI is called Slurm. JupyterHub talks to Slurm for us and then opens JupyterLab in the browser, running on the node Slurm found.</p>
+<section id="start-a-session" class="level2">
+<h2 class="anchored" data-anchor-id="start-a-session">2.1 Start a session</h2>
+<ol type="1">
+<li>Go to <a href="https://apps.isambard.ac.uk/aip2-jupyter" class="uri">https://apps.isambard.ac.uk/aip2-jupyter</a> and log in.</li>
+<li>Fill in the Server Options form:</li>
+</ol>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>What to choose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Project</td>
+<td>The course project (we’ll tell you its name)</td>
+</tr>
+<tr class="even">
+<td>Job duration</td>
+<td>The shortest option that lasts until the end of the course</td>
+</tr>
+<tr class="odd">
+<td>Number of GH200s</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>Partition</td>
+<td>Leave this empty</td>
+</tr>
+<tr class="odd">
+<td>Reservation</td>
+<td><code>interactive</code></td>
+</tr>
+</tbody>
+</table>
+<ol start="3" type="1">
+<li>Click <strong>Start</strong>. You might see “Pending in queue” while Slurm finds you a node. This is usually quick, but it can take longer if the interactive nodes are busy. JupyterLab opens in your browser once the node is ready.</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled" title="Your session has a time limit">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise · 10 min
+Your session has a time limit
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When the time you chose runs out, the session ends straight away, with no warning. Save your notebook regularly (<code>Ctrl+S</code> or <code>Cmd+S</code>).</p>
+</div>
+</div>
+</section>
+<section id="set-up-the-course-kernel" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-the-course-kernel">2.2 Set up the course kernel</h2>
+<p>The kernel is the Python environment your notebook runs in. We’ve made one especially for this course, with PyTorch and all the other packages installed, and you need to tell JupyterLab to use it. You only have to do this once.</p>
+<p>In JupyterLab, open a terminal (<strong>File → New → Terminal</strong>) and run:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>Terminal</strong></pre>
+</div>
+<div class="sourceCode" id="cb1" data-filename="Terminal"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">$PROJECTDIR</span><span class="ex">/hpc-ai-1/venv/bin/python</span> <span class="at">-m</span> ipykernel install <span class="at">--user</span> <span class="at">--name</span> hpc-ai-1 <span class="at">--display-name</span> <span class="st">"Python (HPC for AI part 1)"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then copy the course notebook into your home folder:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>Terminal</strong></pre>
+</div>
+<div class="sourceCode" id="cb2" data-filename="Terminal"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="va">$PROJECTDIR</span>/hpc-ai-1/hpc-for-ai.ipynb ~/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Open <code>hpc-for-ai.ipynb</code> from the file browser on the left. The kernel name in the top right of the notebook should say “Python (HPC for AI part 1)”. If it says something else, click on it and choose that kernel from the list.</p>
+</section>
+<section id="check-your-gpus" class="level2">
+<h2 class="anchored" data-anchor-id="check-your-gpus">2.3 Check your GPUs</h2>
+<p>Run the first two cells of the notebook. The first one loads the libraries we need:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb3" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Image <span class="im">as</span> ShowImage</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> ConfusionMatrixDisplay, classification_report</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Isambard-AI's compute nodes can't reach the internet, so tell Ultralytics</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># not to try downloading anything. This must be set before importing it.</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"YOLO_OFFLINE"</span>] <span class="op">=</span> <span class="st">"1"</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets training give the same result each time. It has to be set before the</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># GPU is first used, which is why it's here at the top.</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"CUBLAS_WORKSPACE_CONFIG"</span>] <span class="op">=</span> <span class="st">":4096:8"</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ultralytics <span class="im">import</span> YOLO</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: the two environment variables">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Going deeper: the two environment variables
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The cell sets two environment variables, which are settings that libraries read when they start up.</p>
+<ul>
+<li><code>YOLO_OFFLINE</code> tells Ultralytics not to try downloading anything (it normally checks for updates and downloads a font and some extra model files). Without it, you’d see warnings about failed downloads, and training would take a little longer to start.</li>
+<li><code>CUBLAS_WORKSPACE_CONFIG</code> is needed for training to give exactly the same result each time it runs with the same settings. It has to be set before the GPU is first used, otherwise PyTorch prints a long warning during training.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>The second cell asks PyTorch which GPUs it can see. It should find one, with a name like <code>NVIDIA GH200</code>.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb4" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"PyTorch version:"</span>, torch.__version__)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"CUDA available: "</span>, torch.cuda.is_available())</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Number of GPUs: "</span>, torch.cuda.device_count())</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(torch.cuda.device_count()):</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  GPU </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>torch<span class="sc">.</span>cuda<span class="sc">.</span>get_device_name(i)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can also see the GPUs from the terminal with <code>nvidia-smi</code> (the NVIDIA System Management Interface), which lists each GPU, how much of its memory is in use and what’s running on it:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>Terminal</strong></pre>
+</div>
+<div class="sourceCode" id="cb5" data-filename="Terminal"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>JupyterLab on Isambard-AI also has a GPU dashboard. Click the GPU icon in the left-hand sidebar, open the GPU Utilization and GPU Memory panels, and keep them somewhere you can see them. You’ll use them to watch the GPUs while the model trains.</p>
+</section>
+<section id="your-first-gpu-job" class="level2">
+<h2 class="anchored" data-anchor-id="your-first-gpu-job">2.4 Your first GPU job</h2>
+<p>To see how much faster a GPU is, the next cell multiplies two large matrices (8,192 × 8,192 numbers each), first on the CPU and then on a GPU, and times both.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb6" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>size <span class="op">=</span> <span class="dv">8192</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> torch.randn(size, size)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> torch.randn(size, size)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># On the CPU</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.perf_counter()</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>a <span class="op">@</span> b</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>cpu_time <span class="op">=</span> time.perf_counter() <span class="op">-</span> start</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># On GPU 0</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>a_gpu <span class="op">=</span> a.to(<span class="st">"cuda"</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>b_gpu <span class="op">=</span> b.to(<span class="st">"cuda"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>a_gpu <span class="op">@</span> b_gpu  <span class="co"># warm-up: the first call includes one-off set-up costs</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>torch.cuda.synchronize()</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.perf_counter()</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>a_gpu <span class="op">@</span> b_gpu</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>torch.cuda.synchronize()  <span class="co"># wait for the GPU to finish before stopping the clock</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>gpu_time <span class="op">=</span> time.perf_counter() <span class="op">-</span> start</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"CPU: </span><span class="sc">{</span>cpu_time<span class="sc">:.3f}</span><span class="ss"> s"</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"GPU: </span><span class="sc">{</span>gpu_time<span class="sc">:.4f}</span><span class="ss"> s"</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The GPU was </span><span class="sc">{</span>cpu_time <span class="op">/</span> gpu_time<span class="sc">:.0f}</span><span class="ss">x faster"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A couple of lines need explaining:</p>
+<ul>
+<li><code>.to("cuda")</code> copies the numbers from the CPU’s memory into the GPU’s memory. CUDA is NVIDIA’s platform for running code on its GPUs.</li>
+<li><code>torch.cuda.synchronize()</code> waits for the GPU to finish. Python doesn’t wait for the GPU by default; it carries on as soon as it has sent the work. Without this line we’d be timing how long it took to send the work, rather than how long it took to do it.</li>
+</ul>
+<p>We also run the multiplication once on the GPU before we start timing. The first thing you do on a GPU is slower than usual because of one-off setup, and we don’t want that in our timing.</p>
+</section>
+<section id="where-things-live" class="level2">
+<h2 class="anchored" data-anchor-id="where-things-live">2.5 Where things live</h2>
+<p>Isambard-AI has several places to store files. We’ll use three of them:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Location</th>
+<th>What it is</th>
+<th>What we use it for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>$PROJECTDIR</code></td>
+<td>Shared by everyone in the project. Not backed up.</td>
+<td>The dataset, model weights and course kernel. You can read these but not change them.</td>
+</tr>
+<tr class="even">
+<td><code>$SCRATCHDIR</code></td>
+<td>Your own working space. Not backed up.</td>
+<td>Everything you create, including the data split and your trained models.</td>
+</tr>
+<tr class="odd">
+<td><code>$HOME</code></td>
+<td>Your home folder, limited to 100 GiB. Not backed up.</td>
+<td>Your copy of the notebook.</td>
+</tr>
+</tbody>
+</table>
+<p>The compute nodes on Isambard-AI can’t connect to the internet, so everything the notebook needs, including the dataset and the model weights, has been downloaded in advance into the project folder. The next cell sets up the paths to these files, and to your own working folder. It should print <code>True</code> for both the dataset and the model weights.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb7" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Shared course files (read-only for you)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>COURSE_DIR <span class="op">=</span> Path(os.environ.get(<span class="st">"PROJECTDIR"</span>, <span class="st">"/projects/b6er"</span>)) <span class="op">/</span> <span class="st">"hpc-ai-1"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>DATA_DIR <span class="op">=</span> COURSE_DIR <span class="op">/</span> <span class="st">"FracAtlas"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>WEIGHTS <span class="op">=</span> COURSE_DIR <span class="op">/</span> <span class="st">"weights"</span> <span class="op">/</span> <span class="st">"yolov8n-cls.pt"</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Your own working folder</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>WORK_DIR <span class="op">=</span> Path(os.environ.get(<span class="st">"SCRATCHDIR"</span>, Path.home())) <span class="op">/</span> <span class="st">"hpc-ai-1"</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>SPLIT_DIR <span class="op">=</span> WORK_DIR <span class="op">/</span> <span class="st">"fracatlas-split"</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>RUNS_DIR <span class="op">=</span> WORK_DIR <span class="op">/</span> <span class="st">"runs"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>WORK_DIR.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dataset found:      "</span>, DATA_DIR.exists(), <span class="st">"-"</span>, DATA_DIR)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Model weights found:"</span>, WEIGHTS.exists(), <span class="st">"-"</span>, WEIGHTS)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Your work folder:   "</span>, WORK_DIR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exercise" class="level2">
+<h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
+<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ol type="1">
-<li>Add the exercise here.</li>
+<li>Run <code>nvidia-smi</code> in a terminal. How much memory does your GPU have, and how much is being used?</li>
+<li>Change <code>size</code> to 16384 in the matrix multiplication cell and run it again. Each matrix now has four times as many numbers. How do the CPU and GPU times change?</li>
 </ol>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Show answer">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -247,9 +499,12 @@ Show answer
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Add the answer here.</p>
+<ol type="1">
+<li>Your session has one GPU, with about 96 GB of memory (<code>nvidia-smi</code> shows it in MiB). Once you’ve run the matrix multiplication cell, it shows some memory in use by your notebook.</li>
+<li>Multiplying two n × n matrices takes roughly n³ operations, so doubling <code>size</code> means about 8 times as much work. The CPU time goes up a lot. The GPU time goes up much less, because the GPU has more work to spread across its cores, so the gap between the two usually gets bigger. Your exact numbers will be different.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -325,7 +580,7 @@ Show answer
   if (menu) {
     var res = document.createElement("div");
     res.className = "res";
-    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+    [["Notebook", "hpc-for-ai.ipynb"]].forEach(function (r) {
       var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
     });
     menu.parentNode.insertBefore(res, menu);

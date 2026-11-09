@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -178,7 +212,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <div class="section-question">
-<p>Can we teach a computer to spot a fracture?</p>
+<p>4,083 X-rays and four GPUs. Can we teach a computer to spot a fracture?</p>
 </div>
 <div class="key-points callout callout-style-default callout-tip callout-titled" title="In short">
 <div class="callout-header d-flex align-content-center">
@@ -191,18 +225,81 @@ In short
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Use Isambard-AI to train an X-ray fracture classifier on a GPU.</li>
-<li>See what changes when you use four GPUs instead of one.</li>
+<li>Use Isambard-AI, one of the UK’s national supercomputers for AI research, to train a computer vision model.</li>
+<li>Train a bone-fracture classifier on one GPU, then see what happens with four.</li>
 <li>Learn to judge a classifier on imbalanced medical data and to work well on a shared supercomputer.</li>
 </ul>
 </div>
 </div>
-<section id="about-this-course" class="level2">
-<h2 class="anchored" data-anchor-id="about-this-course">About this course</h2>
-<p>Use the menu on the left to move between sections, or the <strong>Present</strong> switch in the top bar to show a section as slides. The slides used in the session, the notebook and the setup notes are linked at the top of the menu.</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In this course you’ll use Isambard-AI, one of the UK’s national supercomputers for AI research, to train a computer vision model.</p>
+<p>Training a deep learning model means repeating the same calculations over and over, often millions of times. A laptop can manage this for small problems, but it soon gets too slow. Supercomputers like Isambard-AI are built around GPUs (graphics processing units), which can do thousands of these calculations at the same time. During the course you’ll see how much difference a GPU makes, and what happens when you use more than one.</p>
+<p>We’re going to explore this topic using a case study: training a model to spot bone fractures in X-ray images. A model like this could, with a lot more work, help clinicians decide which scans to look at first. This could be useful for patient triage in an emergency department.</p>
+<p>Each section of the course starts with a question, and in most sections you’ll answer it by running part of a notebook on Isambard-AI:</p>
+<p><em>Why HPC? → Isambard-AI → The data → 1 GPU → 4 GPUs → Good practice</em></p>
 </section>
-<section id="learning-outcomes" class="level2">
-<h2 class="anchored" data-anchor-id="learning-outcomes">Learning outcomes</h2>
+<section id="the-data-fracatlas" class="level2">
+<h2 class="anchored" data-anchor-id="the-data-fracatlas">The data: FracAtlas</h2>
+<p>FracAtlas is a public dataset of 4,083 X-ray images of hands, legs, hips and shoulders. The images were collected from three hospitals in Bangladesh and labelled by two radiologists, and 719 of them show at least one fracture. They have been anonymised and are shared under a CC BY 4.0 licence.</p>
+<p>The images come with a file called <code>dataset.csv</code>, which has one row per image. These are the columns we’ll use:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>image_id</code></td>
+<td>File name of the image, e.g.&nbsp;<code>IMG0000019.jpg</code></td>
+</tr>
+<tr class="even">
+<td><code>fractured</code></td>
+<td>1 if the image shows a fracture, 0 if not. This is what we want the model to predict.</td>
+</tr>
+<tr class="odd">
+<td><code>hand</code>, <code>leg</code>, <code>hip</code>, <code>shoulder</code></td>
+<td>1 if the image shows that part of the body</td>
+</tr>
+<tr class="even">
+<td><code>hardware</code></td>
+<td>1 if the image shows surgical hardware, such as plates or screws</td>
+</tr>
+<tr class="odd">
+<td><code>multiscan</code></td>
+<td>1 if the same body part was X-rayed from more than one angle</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-to-read-this-document" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-read-this-document">How to read this document</h2>
+<p>The notebook is already written, so you won’t need to type much code. Instead, read each cell before you run it and make sure you know what it’s doing. Once a cell has run, try changing something and running it again; the exercise at the end of each section gives you some ideas. Training the model takes a few minutes each time, so that’s a good moment to ask questions.</p>
+<p>Code from the course notebook is shown in a box with the notebook’s name at the top. You’ll find exactly the same code in one of the notebook’s cells:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb1" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>baseline <span class="op">=</span> (test_df[<span class="st">"fractured"</span>] <span class="op">==</span> <span class="dv">0</span>).mean()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Always guessing 'not fractured' would be </span><span class="sc">{</span>baseline<span class="sc">:.1%}</span><span class="ss"> accurate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Commands to type into a terminal look like this:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>Terminal</strong></pre>
+</div>
+<div class="sourceCode" id="cb2" data-filename="Terminal"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>There’s an exercise at the end of each section, in a blue box. The answer is in the yellow box underneath; have a go yourself before you open it. Green boxes sum up the main points of each section.</p>
+</section>
+<section id="intended-learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="intended-learning-outcomes">Intended learning outcomes</h2>
 <p>By the end of this course, you will:</p>
 <ul>
 <li>Understand when and why AI projects need high-performance computing (HPC).</li>
@@ -211,6 +308,14 @@ In short
 <li>Know how to judge a classifier on imbalanced medical data.</li>
 <li>Understand how training a model on multiple GPUs works.</li>
 <li>Know how to work considerately on a shared supercomputer.</li>
+</ul>
+</section>
+<section id="what-this-course-doesnt-cover" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-course-doesnt-cover">What this course doesn’t cover</h2>
+<ul>
+<li>Batch jobs and Slurm scripts, which are covered in Introduction to HPC.</li>
+<li>Training across several nodes. For that, see the BriCS Distributed PyTorch Training tutorial.</li>
+<li>How neural networks work. See Introduction to AI.</li>
 </ul>
 
 
@@ -284,7 +389,7 @@ In short
   if (menu) {
     var res = document.createElement("div");
     res.className = "res";
-    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+    [["Notebook", "hpc-for-ai.ipynb"]].forEach(function (r) {
       var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
     });
     menu.parentNode.insertBefore(res, menu);

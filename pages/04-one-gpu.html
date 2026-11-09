@@ -211,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Can a computer learn to spot a fracture?</p>
 </div>
 <div class="section-meta">
-<p>About 25 min · notebook cells 14–22 · 1 exercise</p>
+<p>1 exercise</p>
 </div>
 <div class="key-points callout callout-style-default callout-tip callout-titled" title="In short">
 <div class="callout-header d-flex align-content-center">
@@ -224,46 +224,34 @@ In short
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Start from a model already trained on everyday photos, then fine-tune it on our X-rays.</li>
-<li><code>device=0</code> trains on one GPU, and the GPU dashboard shows it working.</li>
-<li>Compare accuracy with a simple baseline. For imbalanced data, look at recall.</li>
+<li>Transfer learning starts with a model trained on everyday photos and fine-tunes it on our X-rays.</li>
+<li><code>device=0</code> trains on a single GPU, and the GPU dashboard shows it working.</li>
+<li>Always compare accuracy with a simple baseline.</li>
+<li>With imbalanced data, look at the recall (sensitivity) for the class you care about most.</li>
 </ul>
 </div>
 </div>
 <section id="the-model" class="level2">
 <h2 class="anchored" data-anchor-id="the-model">4.1 The model</h2>
-<p>We’ll use <strong>YOLOv8n-cls</strong>, a small image classifier from the Ultralytics library. It’s a convolutional neural network, which picks out edges, textures and shapes in different parts of an image.</p>
-<p>Training one from scratch would need far more than 4,000 images. Instead we use <strong>transfer learning</strong>: start from a model that has seen over a million everyday photos (ImageNet), then fine-tune it on X-rays.</p>
-<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: why does transfer learning work on X-rays?">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Going deeper: why does transfer learning work on X-rays?
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The early layers of a network learn general features such as edges and textures, which are useful for almost any image. Fine-tuning mostly adjusts the later layers to the new task, so far fewer examples are needed.</p>
-</div>
-</div>
-</div>
+<p>We’ll use <strong>YOLOv8n-cls</strong>, a small image classification model from the Ultralytics library. It’s a <strong>convolutional neural network</strong>, a type of neural network that picks out patterns such as edges, textures and shapes in different parts of an image.</p>
+<p>To train a model like this from scratch, we’d need far more than 4,000 images. Instead we use <strong>transfer learning</strong>. We start with a model that has already been trained on more than a million everyday photos (the ImageNet dataset), so it has already learned to recognise general visual patterns, and then we fine-tune it on our X-rays.</p>
 </section>
 <section id="training-settings" class="level2">
 <h2 class="anchored" data-anchor-id="training-settings">4.2 Training settings</h2>
-<p>Four settings control the run. You can change them in the exercise.</p>
 <div class="code-with-filename">
 <div class="code-with-filename-file">
 <pre><strong>hpc-for-ai.ipynb</strong></pre>
 </div>
-<div class="sourceCode" id="cb1" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>EPOCHS   <span class="op">=</span> <span class="dv">50</span></span>
+<div class="sourceCode" id="cb1" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>EPOCHS <span class="op">=</span> <span class="dv">50</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>IMG_SIZE <span class="op">=</span> <span class="dv">512</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>BATCH    <span class="op">=</span> <span class="dv">64</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>WORKERS  <span class="op">=</span> <span class="dv">8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>BATCH <span class="op">=</span> <span class="dv">64</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>WORKERS <span class="op">=</span> <span class="dv">8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Setting</th>
@@ -273,148 +261,249 @@ Going deeper: why does transfer learning work on X-rays?
 <tbody>
 <tr class="odd">
 <td><code>EPOCHS</code></td>
-<td>Times the model sees every training image</td>
+<td>The number of times the model sees every training image.</td>
 </tr>
 <tr class="even">
 <td><code>IMG_SIZE</code></td>
-<td>Width and height of the square each image becomes</td>
+<td>The width and height, in pixels, of the square each image is turned into.</td>
 </tr>
 <tr class="odd">
 <td><code>BATCH</code></td>
-<td>Images seen before the weights are updated</td>
+<td>The number of images the model looks at before it updates its weights.</td>
 </tr>
 <tr class="even">
 <td><code>WORKERS</code></td>
-<td>CPU processes loading images so the GPU isn’t waiting</td>
+<td>The number of CPU processes loading images in the background, so the GPU doesn’t have to wait for them.</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="train" class="level2">
 <h2 class="anchored" data-anchor-id="train">4.3 Train</h2>
-<p>Open the GPU dashboard first, then run the cell. Each epoch prints the loss and the validation accuracy.</p>
+<p>Open the GPU dashboard before you run the next cell so that you can watch the GPU while the model trains.</p>
 <div class="code-with-filename">
 <div class="code-with-filename-file">
 <pre><strong>hpc-for-ai.ipynb</strong></pre>
 </div>
 <div class="sourceCode" id="cb2" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> YOLO(WEIGHTS)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model.train(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span><span class="bu">str</span>(SPLIT_DIR), epochs<span class="op">=</span>EPOCHS, imgsz<span class="op">=</span>IMG_SIZE,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    batch<span class="op">=</span>BATCH, workers<span class="op">=</span>WORKERS,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    device<span class="op">=</span><span class="dv">0</span>,   <span class="co"># one GPU</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    project<span class="op">=</span><span class="bu">str</span>(RUNS_DIR), name<span class="op">=</span><span class="st">"1gpu"</span>, seed<span class="op">=</span><span class="dv">42</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.perf_counter()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>model.train(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span><span class="bu">str</span>(SPLIT_DIR),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    epochs<span class="op">=</span>EPOCHS,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    imgsz<span class="op">=</span>IMG_SIZE,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    batch<span class="op">=</span>BATCH,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    workers<span class="op">=</span>WORKERS,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    device<span class="op">=</span><span class="dv">0</span>,  <span class="co"># one GPU</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    project<span class="op">=</span><span class="bu">str</span>(RUNS_DIR),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"1gpu"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    exist_ok<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span><span class="dv">42</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>time_1gpu <span class="op">=</span> time.perf_counter() <span class="op">-</span> start</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Training on 1 GPU took </span><span class="sc">{</span>time_1gpu <span class="op">/</span> <span class="dv">60</span><span class="sc">:.1f}</span><span class="ss"> minutes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="deeper callout callout-style-default callout-note callout-titled" title="What the other arguments do">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<p><code>device=0</code> tells Ultralytics to use GPU 0 only. <code>project</code> and <code>name</code> tell it where to save the results, which in this case is <code>runs/1gpu</code> in your scratch folder.</p>
+<p>While it’s training, Ultralytics prints a line for each epoch with the <strong>loss</strong>, which measures how wrong the model is on the training images, and the accuracy on the validation set. The loss should go down and the accuracy should go up.</p>
+</section>
+<section id="how-did-training-go" class="level2">
+<h2 class="anchored" data-anchor-id="how-did-training-go">4.4 How did training go?</h2>
+<p>Ultralytics saves some plots of the training run in the run’s folder. This cell shows the main one.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb3" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>run_1gpu <span class="op">=</span> RUNS_DIR <span class="op">/</span> <span class="st">"1gpu"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>display(ShowImage(filename<span class="op">=</span><span class="bu">str</span>(run_1gpu <span class="op">/</span> <span class="st">"results.png"</span>), width<span class="op">=</span><span class="dv">800</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Compare the two loss plots. If the training loss keeps falling but the validation loss starts to rise, the model is <strong>overfitting</strong>: it’s learning details of the training images that don’t help with new ones. You may see this towards the end of our run. This is one reason Ultralytics saves the epoch that did best on the validation set as <code>best.pt</code>, as well as the final one.</p>
+<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: the training plots">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-What the other arguments do
+Going deeper: the training plots
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><code>project</code> and <code>name</code> decide where results are saved (<code>runs/1gpu</code> in your scratch folder). <code>seed</code> makes the run repeatable.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="how-did-training-go" class="level2">
-<h2 class="anchored" data-anchor-id="how-did-training-go">4.4 How did training go?</h2>
-<p>Compare the two loss curves. If training loss keeps falling while validation loss rises, the model is <strong>overfitting</strong>. That’s why Ultralytics keeps the best epoch as <code>best.pt</code>.</p>
-<!-- Add your own plot here, e.g. ![](images/results.png) -->
-</section>
-<section id="test-the-model" class="level2">
-<h2 class="anchored" data-anchor-id="test-the-model">4.5 Test the model</h2>
-<p>Classify every test image with <code>best.pt</code> and compare with the real labels. In the confusion matrix, the diagonal is correct. A <strong>missed fracture</strong> sits in the fractured row, not-fractured column.</p>
+<p>Each small plot shows one measurement, with the epoch number along the bottom. The blue line is the value at each epoch, and the dotted orange line is a smoothed version that makes the trend easier to see.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
 <thead>
 <tr class="header">
-<th></th>
-<th>predicted fractured</th>
-<th>predicted not</th>
+<th>Plot</th>
+<th>What it shows</th>
+<th>What you want to see</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>real fractured</strong></td>
-<td>found</td>
-<td>missed</td>
+<td><code>train/loss</code></td>
+<td>How wrong the model is on the training images</td>
+<td>Going down</td>
 </tr>
 <tr class="even">
-<td><strong>real not</strong></td>
-<td>false alarm</td>
-<td>correct</td>
+<td><code>val/loss</code></td>
+<td>How wrong the model is on the validation images, which it doesn’t learn from</td>
+<td>Going down, then levelling off</td>
+</tr>
+<tr class="odd">
+<td><code>metrics/accuracy_top1</code></td>
+<td>The proportion of validation images the model classifies correctly</td>
+<td>Going up, then levelling off</td>
+</tr>
+<tr class="even">
+<td><code>metrics/accuracy_top5</code></td>
+<td>Whether the right answer is in the model’s top five guesses</td>
+<td>Ignore it: with only two classes, it’s always 1</td>
 </tr>
 </tbody>
 </table>
-<div class="deeper callout callout-style-default callout-note callout-titled" title="Reading the classification report">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
-Reading the classification report
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+</section>
+<section id="test-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="test-the-model">4.5 Test the model</h2>
+<p>The version of the model that did best on the validation set is saved as <code>best.pt</code>. We load it, ask it to classify every image in the test set, and compare its answers with the real labels. <code>*</code> in the path means “anything”, so <code>test/*/*.jpg</code> matches every image in both class folders. The folder each image is in tells us its real label.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb4" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate(weights):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Classify every test image and return the true and predicted labels."""</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> YOLO(weights)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    true, pred <span class="op">=</span> [], []</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    test_images <span class="op">=</span> <span class="bu">str</span>(SPLIT_DIR <span class="op">/</span> <span class="st">"test"</span> <span class="op">/</span> <span class="st">"*"</span> <span class="op">/</span> <span class="st">"*.jpg"</span>)  <span class="co"># every image in every class folder</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> result <span class="kw">in</span> model.predict(test_images, imgsz<span class="op">=</span>IMG_SIZE, stream<span class="op">=</span><span class="va">True</span>, verbose<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        true.append(Path(result.path).parent.name)  <span class="co"># the folder name is the true label</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        pred.append(result.names[result.probs.top1])  <span class="co"># the class the model thinks is most likely</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> true, pred</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>true, pred <span class="op">=</span> evaluate(run_1gpu <span class="op">/</span> <span class="st">"weights"</span> <span class="op">/</span> <span class="st">"best.pt"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(true, pred, digits<span class="op">=</span><span class="dv">3</span>))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_predictions(true, pred, cmap<span class="op">=</span><span class="st">"Purples"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"1 GPU: test set"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>classification_report</code> gives three scores for each class:</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Score</th>
-<th>For the fractured class</th>
+<th>What it tells us about the fractured class</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Precision</td>
-<td>When it says “fractured”, how often is it right?</td>
+<td>When the model says “fractured”, how often is it right?</td>
 </tr>
 <tr class="even">
 <td>Recall</td>
-<td>What share of real fractures did it find?</td>
+<td>What proportion of the real fractures did the model find? This is also called <em>sensitivity</em>.</td>
 </tr>
 <tr class="odd">
-<td>F1</td>
-<td>One score combining the two</td>
+<td>F1-score</td>
+<td>A single score that combines precision and recall.</td>
+</tr>
+<tr class="even">
+<td>Support</td>
+<td>How many images of that class are in the test set.</td>
 </tr>
 </tbody>
 </table>
+<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: the summary rows and the confusion matrix">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Going deeper: the summary rows and the confusion matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The rows at the bottom of the report summarise both classes:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Row</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>accuracy</code></td>
+<td>The proportion of all test images the model classified correctly.</td>
+</tr>
+<tr class="even">
+<td><code>macro avg</code></td>
+<td>The plain average of the two classes’ scores, so each class counts equally.</td>
+</tr>
+<tr class="odd">
+<td><code>weighted avg</code></td>
+<td>The average weighted by support. There are many more <code>not_fractured</code> images, so this is close to the <code>not_fractured</code> scores.</td>
+</tr>
+</tbody>
+</table>
+<p>Below the report is a <strong>confusion matrix</strong>, which compares the model’s answers with the real labels. The real label is up the side and the model’s answer is along the bottom, and each box shows a number of images. The correct answers are on the diagonal, from top left to bottom right. The missed fractures are in the <code>fractured</code> row, <code>not_fractured</code> column, and the false alarms are in the <code>not_fractured</code> row, <code>fractured</code> column.</p>
 </div>
 </div>
 </div>
 </section>
 <section id="is-that-accuracy-any-good" class="level2">
 <h2 class="anchored" data-anchor-id="is-that-accuracy-any-good">4.6 Is that accuracy any good?</h2>
-<p>Most images show no fracture, so a “model” that always says <em>not fractured</em> would be right over 80% of the time and find nothing. Accuracy alone misleads on imbalanced data.</p>
-<p>For triage, recall on the fractured class matters most. A missed fracture is worse than a false alarm a clinician can rule out.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb5" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>baseline <span class="op">=</span> (test_df[<span class="st">"fractured"</span>] <span class="op">==</span> <span class="dv">0</span>).mean()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Always guessing 'not fractured' would be </span><span class="sc">{</span>baseline<span class="sc">:.1%}</span><span class="ss"> accurate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Most of the images don’t show a fracture, so a “model” that always said “not fractured” would be right over 80% of the time, and it wouldn’t find a single fracture. That’s why accuracy on its own can be misleading when the data is imbalanced.</p>
+<p>If we wanted to use this model to decide which scans to look at first, the most important score would be the <strong>recall</strong> for the fractured class. Missing a fracture is worse than a false alarm that a clinician can check and rule out.</p>
 </section>
 <section id="exercise" class="level2">
 <h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
-<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise · 10 min">
+<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise · 10 min
+Exercise
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>Look at the classification report and confusion matrix for your 1-GPU model.</p>
 <ol type="1">
-<li>What is the recall for the fractured class, in plain English?</li>
-<li>How many real fractures in the test set did the model miss?</li>
-<li>Would you use it to decide which X-rays to look at first?</li>
+<li>What is the model’s recall for the fractured class? What does that number mean in plain English?</li>
+<li>How many of the real fractures in the test set did the model miss?</li>
+<li>Would you be happy using this model to decide which X-rays to look at first? What would you want to know before you did?</li>
 </ol>
+<p>If you have time: change <code>IMG_SIZE</code> to 224 in the settings cell, then run the training and testing cells again. How do the training time and recall change?</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Show answer">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -423,9 +512,14 @@ Show answer
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A recall of 0.70 means 70% of fractures were found and 30% missed. Missed fractures are in the fractured row, not_fractured column. Almost certainly not yet: you’d want to know how it does at other hospitals, on each body region, and with a split by patient.</p>
+<ol type="1">
+<li>Look at the recall value in the <code>fractured</code> row. A recall of 0.70, for example, means the model found 70% of the fractures in the test set and missed the other 30%.</li>
+<li>In the confusion matrix, the missed fractures are the images where the true label is <code>fractured</code> but the predicted label is <code>not_fractured</code>.</li>
+<li>Almost certainly not yet. You’d want to know, for example, how well it works on X-rays from other hospitals and for each body region, whether it’s taking shortcuts such as spotting hardware, how it does with a proper split by patient, and whether it actually helps in a clinical study. A model like this would only ever support a clinician’s decision, not replace it.</li>
+</ol>
+<p>Training should be quite a bit faster with smaller images. Recall may drop, because fine details such as hairline fractures can be lost when the image is made smaller, but with only 108 fractures in the test set, a small difference could just be chance. Remember to set <code>IMG_SIZE</code> back to 512 afterwards.</p>
 </div>
 </div>
 </div>
@@ -501,7 +595,7 @@ Show answer
   if (menu) {
     var res = document.createElement("div");
     res.className = "res";
-    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+    [["Notebook", "hpc-for-ai.ipynb"]].forEach(function (r) {
       var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
     });
     menu.parentNode.insertBefore(res, menu);

@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -177,7 +211,7 @@ ul.task-list li input[type="checkbox"] {
 <p>How do I use a shared supercomputer well?</p>
 </div>
 <div class="section-meta">
-<p>About 20 min · 1 exercise</p>
+<p>1 exercise</p>
 </div>
 <div class="key-points callout callout-style-default callout-tip callout-titled" title="In short">
 <div class="callout-header d-flex align-content-center">
@@ -190,55 +224,78 @@ In short
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>First key point.</li>
-<li>Second key point.</li>
-<li>Third key point.</li>
+<li>Save regularly, check how much time you have left with <code>squeue</code>, and stop your server when you’ve finished.</li>
+<li>None of the storage on Isambard-AI is backed up. Share large datasets in <code>$PROJECTDIR</code> and keep working files in <code>$SCRATCHDIR</code>.</li>
+<li>Use the GPU dashboard to check your GPUs are busy before asking for more of them.</li>
+<li>For long training runs, move from notebooks to scripts and batch jobs.</li>
 </ul>
 </div>
 </div>
-<section id="first-subsection" class="level2">
-<h2 class="anchored" data-anchor-id="first-subsection">6.1 First subsection</h2>
-<p>A few sentences, one code cell and at most one figure.</p>
-<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: optional detail">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<p>Isambard-AI is used by researchers all over the UK. These habits help it work well for everyone, including you.</p>
+<section id="look-after-your-session" class="level2">
+<h2 class="anchored" data-anchor-id="look-after-your-session">6.1 Look after your session</h2>
+<p>Check how much time your session has left by running this in a terminal:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>Terminal</strong></pre>
 </div>
-<div class="callout-title-container flex-fill">
-Going deeper: optional detail
+<div class="sourceCode" id="cb1" data-filename="Terminal"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">squeue</span> <span class="at">--me</span> <span class="at">--partition</span><span class="op">=</span>interactive <span class="at">--name</span><span class="op">=</span><span class="st">"spawner-jupyterhub"</span> <span class="at">--format</span><span class="op">=</span><span class="st">"%.10M %.10L"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Longer explanations go in a folded box like this one.</p>
-</div>
-</div>
-</div>
+<p><code>TIME</code> is how long your session has been running and <code>TIME_LEFT</code> is how long it has left. You need <code>--partition=interactive</code> because sessions in the interactive reservation don’t show up in <code>squeue --me</code> on its own.</p>
+<p>Remember that the session ends without any warning, so save your work regularly. When you’ve finished, stop your server by going to <strong>File → Hub Control Panel</strong> and clicking <strong>Stop My Server</strong>. Until you do, the GPUs stay reserved for you even if you aren’t using them, and they count against your project’s allocation.</p>
 </section>
-<section id="second-subsection" class="level2">
-<h2 class="anchored" data-anchor-id="second-subsection">6.2 Second subsection</h2>
-<p>Add the content here.</p>
+<section id="look-after-your-data" class="level2">
+<h2 class="anchored" data-anchor-id="look-after-your-data">6.2 Look after your data</h2>
+<p>None of the storage on Isambard-AI is backed up, including <code>$HOME</code>, <code>$SCRATCHDIR</code> and <code>$PROJECTDIR</code>, so copy anything important somewhere safe.</p>
+<ul>
+<li>Put large datasets in <code>$PROJECTDIR</code>, so everyone in the project can share one copy, as we did with FracAtlas.</li>
+<li>Keep working files, such as checkpoints and outputs, in <code>$SCRATCHDIR</code> rather than <code>$HOME</code>, which is limited to 100 GiB.</li>
+</ul>
+</section>
+<section id="use-the-gpus-well" class="level2">
+<h2 class="anchored" data-anchor-id="use-the-gpus-well">6.3 Use the GPUs well</h2>
+<ul>
+<li>Keep an eye on the GPU dashboard. If a GPU is idle a lot of the time, adding more GPUs won’t help. Try more data-loading workers, a bigger batch or a bigger model instead.</li>
+<li>Start small. Test your code on one GPU for a few epochs before you ask for more.</li>
+<li>Only ask for what you need. If your job only uses one GPU, ask for one GH200 rather than four.</li>
+</ul>
+</section>
+<section id="when-to-move-on-from-notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-move-on-from-notebooks">6.4 When to move on from notebooks</h2>
+<p>Notebooks are good for exploring data and learning, but they’re not ideal for long training runs. The session has a time limit, and if your browser or internet connection drops, you can lose track of where you were.</p>
+<p>For real projects, the next step is to put your training code into a Python script and submit it to Slurm as a <strong>batch job</strong>. A batch job runs on its own, even after you’ve logged out, and you can queue up lots of runs at once. Our <em>Introduction to HPC</em> course covers how to do this.</p>
+</section>
+<section id="where-to-go-next" class="level2">
+<h2 class="anchored" data-anchor-id="where-to-go-next">6.5 Where to go next</h2>
+<ul>
+<li><em>Introduction to HPC</em> covers scripts, batch jobs and Slurm.</li>
+<li>The Isambard-AI documentation, including the JupyterHub guide.</li>
+<li>The BriCS Distributed PyTorch Training tutorial shows how to train across several nodes.</li>
+<li>The Ultralytics image classification documentation.</li>
+<li>Applying for access to Isambard-AI for your own project.</li>
+</ul>
 </section>
 <section id="exercise" class="level2">
 <h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
-<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise · 10 min">
+<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise · 10 min
+Exercise
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ol type="1">
-<li>Add the exercise here.</li>
+<li>Run the <code>squeue</code> command above in a terminal. How long does your session have left?</li>
+<li>Run <code>du -sh $SCRATCHDIR/hpc-ai-1</code> to see how much space your work takes up. Why is it so small when there are 4,083 images?</li>
+<li>Stop your server.</li>
 </ol>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Show answer">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -247,9 +304,13 @@ Show answer
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Add the answer here.</p>
+<ol type="1">
+<li>The <code>TIME_LEFT</code> column shows the time remaining, in hours, minutes and seconds.</li>
+<li>Your split folder only contains symbolic links, not copies of the images, so it takes up almost no space. Most of the space is taken up by the trained models in <code>runs/</code>.</li>
+<li>Go to <strong>File → Hub Control Panel</strong> and click <strong>Stop My Server</strong>.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -325,7 +386,7 @@ Show answer
   if (menu) {
     var res = document.createElement("div");
     res.className = "res";
-    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+    [["Notebook", "hpc-for-ai.ipynb"]].forEach(function (r) {
       var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
     });
     menu.parentNode.insertBefore(res, menu);

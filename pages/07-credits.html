@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Credits, acknowledgements and references – HPC for AI · Part 1</title>
+<title>Credits and references – HPC for AI · Part 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -68,7 +68,7 @@ ul.task-list li input[type="checkbox"] {
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-          <h1 class="quarto-secondary-nav-title">Credits, acknowledgements and references</h1>
+          <h1 class="quarto-secondary-nav-title">Credits and references</h1>
         </a>     
     </div>
   </nav>
@@ -152,7 +152,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">Credits, acknowledgements and references</h1>
+<h1 class="title d-none d-lg-block">Credits and references</h1>
 </div>
 
 
@@ -174,14 +174,15 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <section id="credits" class="level2">
 <h2 class="anchored" data-anchor-id="credits">Credits</h2>
-<p>Developed by the Jean Golding Institute, University of Bristol. Based on Evie Grace’s Radiograph-Reader project.</p>
+<p>This course is based on Evie Grace’s Radiograph-Reader project. Developed by the Jean Golding Institute, University of Bristol. © CC BY 4.0.</p>
 </section>
 <section id="acknowledgements" class="level2">
 <h2 class="anchored" data-anchor-id="acknowledgements">Acknowledgements</h2>
-<p>Computing time on Isambard-AI is provided by the Bristol Centre for Supercomputing (BriCS) as part of the UK AI Research Resource.</p>
+<p>This course uses the FracAtlas dataset. Computing time on Isambard-AI is provided by the Bristol Centre for Supercomputing (BriCS) as part of the UK AI Research Resource.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
+<p>If you use FracAtlas in your own work, please cite:</p>
 <p>Abedeen, I., Rahman, M. A., Prottyasha, F. Z., Ahmed, T., Chowdhury, T. M. &amp; Shatabda, S. (2023). FracAtlas: A Dataset for Fracture Classification, Localization and Segmentation of Musculoskeletal Radiographs. <em>Scientific Data</em>, 10, 521. <a href="https://doi.org/10.1038/s41597-023-02432-4" class="uri">https://doi.org/10.1038/s41597-023-02432-4</a></p>
 <p>The dataset is available from figshare under a CC BY 4.0 licence.</p>
 
@@ -256,7 +257,7 @@ ul.task-list li input[type="checkbox"] {
   if (menu) {
     var res = document.createElement("div");
     res.className = "res";
-    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+    [["Notebook", "hpc-for-ai.ipynb"]].forEach(function (r) {
       var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
     });
     menu.parentNode.insertBefore(res, menu);

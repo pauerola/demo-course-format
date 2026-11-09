@@ -177,7 +177,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Why can’t I just use my laptop?</p>
 </div>
 <div class="section-meta">
-<p>About 20 min · 1 exercise</p>
+<p>1 exercise</p>
 </div>
 <div class="key-points callout callout-style-default callout-tip callout-titled" title="In short">
 <div class="callout-header d-flex align-content-center">
@@ -190,55 +190,49 @@ In short
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>First key point.</li>
-<li>Second key point.</li>
-<li>Third key point.</li>
+<li>Training a neural network is mostly multiplying large matrices, which GPUs do very quickly.</li>
+<li>Each Isambard-AI node has four GH200 superchips, each with an H100 GPU.</li>
+<li>HPC is useful when training is too slow, needs more memory than you have, or has to be repeated many times.</li>
 </ul>
 </div>
 </div>
-<section id="first-subsection" class="level2">
-<h2 class="anchored" data-anchor-id="first-subsection">1.1 First subsection</h2>
-<p>A few sentences, one code cell and at most one figure.</p>
-<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: optional detail">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Going deeper: optional detail
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Longer explanations go in a folded box like this one.</p>
-</div>
-</div>
-</div>
+<section id="why-cant-i-just-use-my-laptop" class="level2">
+<h2 class="anchored" data-anchor-id="why-cant-i-just-use-my-laptop">1.1 Why can’t I just use my laptop?</h2>
+<p>To train a neural network, we show it thousands of examples, many times over, and after each batch we adjust millions of numbers inside the model (its <strong>weights</strong>) by a small amount. Most of that work is multiplying large grids of numbers together.</p>
+<ul>
+<li><strong>CPU:</strong> a small number of fast, flexible cores. It’s good at working through a series of different tasks.</li>
+<li><strong>GPU:</strong> thousands of simpler cores that all do the same sum on different numbers at once, which is exactly what a neural network needs.</li>
+</ul>
+<p>Most laptops have a CPU with only a few cores, and many don’t have a dedicated NVIDIA GPU, which is what most deep learning software is built to use. That’s fine for learning and for small models, but bigger projects soon run into problems. Training can take hours or days, the model or a batch of images might not fit in memory, or you might want to try lots of different settings and not have the time.</p>
+<p>This is where HPC systems like Isambard-AI come in. They have many nodes, each with several GPUs and plenty of memory, so you can train models that are too big for your laptop, or train the same model many times to find the best settings.</p>
 </section>
-<section id="second-subsection" class="level2">
-<h2 class="anchored" data-anchor-id="second-subsection">1.2 Second subsection</h2>
-<p>Add the content here.</p>
+<section id="isambard-ai" class="level2">
+<h2 class="anchored" data-anchor-id="isambard-ai">1.2 Isambard-AI</h2>
+<p>Isambard-AI is a supercomputer in Bristol, run by the Bristol Centre for Supercomputing (BriCS) as part of the UK’s AI Research Resource. Phase 2 of the system has 1,320 <strong>nodes</strong>, which are the individual computers that make up the supercomputer. Each node has four NVIDIA GH200 Grace Hopper “superchips”, and each superchip combines a 72-core Grace CPU with an H100 GPU that has 96 GB of memory.</p>
+<!-- Add the image "A laptop compared with one Isambard-AI node" here, e.g. ![](images/laptop-vs-node.png) -->
 </section>
 <section id="exercise" class="level2">
 <h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
-<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise · 10 min">
+<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise · 10 min
+Exercise
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>Think of a model you’ve trained, or would like to train, in your own work.</p>
 <ol type="1">
-<li>Add the exercise here.</li>
+<li>Roughly how long does one training run take on the computer you use now?</li>
+<li>What limits you most: time, memory, or the number of runs you can do?</li>
+<li>If a training run took 10 minutes, what would you do differently?</li>
 </ol>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Show answer">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -247,9 +241,14 @@ Show answer
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Add the answer here.</p>
+<p>There’s no single right answer, but these are common replies:</p>
+<ul>
+<li>Time is the most common limit. If a run takes a day, you can only test one idea a day.</li>
+<li>Memory problems usually show up as “CUDA out of memory” errors, or as having to use smaller images or batches than you’d like.</li>
+<li>When runs are faster, most people say they’d try more ideas: other models, other settings and more data. This is often the biggest benefit of HPC.</li>
+</ul>
 </div>
 </div>
 </div>
@@ -325,7 +324,7 @@ Show answer
   if (menu) {
     var res = document.createElement("div");
     res.className = "res";
-    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+    [["Notebook", "hpc-for-ai.ipynb"]].forEach(function (r) {
       var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
     });
     menu.parentNode.insertBefore(res, menu);

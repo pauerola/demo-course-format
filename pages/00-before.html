@@ -187,8 +187,8 @@ In short
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>You need an Isambard-AI account added to the course project.</li>
-<li>Set a UNIX username in the BriCS portal.</li>
+<li>You need an Isambard-AI account that has been added to the course project.</li>
+<li>Set a UNIX username in the BriCS portal. JupyterHub won’t start without one.</li>
 <li>Check you can log in to the BriCS portal before the day.</li>
 </ul>
 </div>
@@ -196,10 +196,11 @@ In short
 <section id="what-youll-need" class="level2">
 <h2 class="anchored" data-anchor-id="what-youll-need">0.1 What you’ll need</h2>
 <ul>
-<li>An Isambard-AI account that has been added to the course project. We’ll email you an invitation before the course.</li>
-<li>A UNIX username, set in the BriCS portal. JupyterHub won’t start without one.</li>
-<li>A web browser. Everything happens in the browser, so you don’t need to install anything.</li>
+<li><strong>An Isambard-AI account</strong> that has been added to the course project. We’ll email you an invitation before the course; accept it and follow the steps in the email.</li>
+<li><strong>A UNIX username</strong>, set in the BriCS portal. JupyterHub won’t start without one. There are instructions in <em>Setting your UNIX username</em>.</li>
+<li><strong>A web browser.</strong> Everything happens in the browser, so you don’t need to install anything.</li>
 </ul>
+<p>If you can, please check that you can log in to the BriCS portal before the day.</p>
 
 
 </section>
@@ -272,7 +273,7 @@ In short
   if (menu) {
     var res = document.createElement("div");
     res.className = "res";
-    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+    [["Notebook", "hpc-for-ai.ipynb"]].forEach(function (r) {
       var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
     });
     menu.parentNode.insertBefore(res, menu);

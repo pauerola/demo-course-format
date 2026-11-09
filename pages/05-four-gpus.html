@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -177,7 +211,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Is more GPUs always faster?</p>
 </div>
 <div class="section-meta">
-<p>About 20 min · 1 exercise</p>
+<p>Instructor demo · 1 exercise</p>
 </div>
 <div class="key-points callout callout-style-default callout-tip callout-titled" title="In short">
 <div class="callout-header d-flex align-content-center">
@@ -190,55 +224,176 @@ In short
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>First key point.</li>
-<li>Second key point.</li>
-<li>Third key point.</li>
+<li>In data parallel training, each GPU has a copy of the model and part of each batch, and the GPUs average their gradients after every batch.</li>
+<li>PyTorch’s DDP runs one process per GPU. Ultralytics starts these processes for you when you give it a list of GPUs.</li>
+<li>Using more GPUs adds extra work: starting up, sharing gradients and loading data. Small jobs might hardly speed up at all.</li>
 </ul>
 </div>
 </div>
-<section id="first-subsection" class="level2">
-<h2 class="anchored" data-anchor-id="first-subsection">5.1 First subsection</h2>
-<p>A few sentences, one code cell and at most one figure.</p>
-<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: optional detail">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Going deeper: optional detail
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Longer explanations go in a folded box like this one.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="second-subsection" class="level2">
-<h2 class="anchored" data-anchor-id="second-subsection">5.2 Second subsection</h2>
-<p>Add the content here.</p>
-</section>
-<section id="exercise" class="level2">
-<h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
-<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise · 10 min">
+<div class="callout callout-style-default callout-warning callout-titled" title="This section is a demo">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise · 10 min
+This section is a demo
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>Your session has one GPU, so please don’t run the cells in this section. The instructor will run them on screen in a session with four GPUs, and you can follow along here. If you want to try it yourself after the course, start a session with 4 GH200s.</p>
+</div>
+</div>
+<section id="data-parallelism" class="level2">
+<h2 class="anchored" data-anchor-id="data-parallelism">5.1 Data parallelism</h2>
+<p>So far, we’ve trained on one GPU, but each Isambard-AI node has four. The simplest way to use all four is called <strong>data parallelism</strong>.</p>
+<!-- Add the image "Data parallel training: each GPU trains on part of each batch, then they share what they've learned" here -->
 <ol type="1">
-<li>Add the exercise here.</li>
+<li>Each GPU gets its own copy of the model.</li>
+<li>Each batch is shared out between the GPUs. With a batch of 64 and four GPUs, each GPU gets 16 images.</li>
+<li>Each GPU works out how the model should change, using its own 16 images. These changes are called <strong>gradients</strong>.</li>
+<li>The GPUs average their gradients. They do this by sending data directly to each other, using an NVIDIA library called NCCL, in a step called an <strong>all-reduce</strong>.</li>
+<li>Each GPU updates its copy of the model with the averaged gradients, so all four copies stay the same.</li>
+</ol>
+</section>
+<section id="whats-happening-behind-the-scenes" class="level2">
+<h2 class="anchored" data-anchor-id="whats-happening-behind-the-scenes">5.2 What’s happening behind the scenes</h2>
+<p>PyTorch does this using <strong>Distributed Data Parallel (DDP)</strong>. DDP runs a separate Python process for each GPU, and gives each process a number from 0 to 3, called its <strong>rank</strong>.</p>
+<div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: how Ultralytics starts the processes">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Going deeper: how Ultralytics starts the processes
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Your notebook is only one Python process, so Ultralytics gets round this by writing a short training script and running four copies of it, one per GPU, with PyTorch’s <code>torch.distributed.run</code> command. Look for a line starting with <code>DDP:</code> in the output, which shows the exact command it used.</p>
+<p>If you run <code>nvidia-smi</code> in a terminal while it’s training, you’ll see four Python processes, one on each GPU.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="train-on-four-gpus" class="level2">
+<h2 class="anchored" data-anchor-id="train-on-four-gpus">5.3 Train on four GPUs</h2>
+<p>The only thing we change is <code>device=[0, 1, 2, 3]</code>.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb1" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> YOLO(WEIGHTS)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.perf_counter()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>model.train(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span><span class="bu">str</span>(SPLIT_DIR),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    epochs<span class="op">=</span>EPOCHS,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    imgsz<span class="op">=</span>IMG_SIZE,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    batch<span class="op">=</span>BATCH,  <span class="co"># the total batch is shared out: 64 / 4 = 16 images per GPU</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    workers<span class="op">=</span>WORKERS,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    device<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>],  <span class="co"># four GPUs</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    project<span class="op">=</span><span class="bu">str</span>(RUNS_DIR),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"4gpu"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    exist_ok<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span><span class="dv">42</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>time_4gpu <span class="op">=</span> time.perf_counter() <span class="op">-</span> start</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Training on 4 GPUs took </span><span class="sc">{</span>time_4gpu <span class="op">/</span> <span class="dv">60</span><span class="sc">:.1f}</span><span class="ss"> minutes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="was-it-faster" class="level2">
+<h2 class="anchored" data-anchor-id="was-it-faster">5.4 Was it faster?</h2>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb2" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>timings <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"minutes"</span>: [time_1gpu <span class="op">/</span> <span class="dv">60</span>, time_4gpu <span class="op">/</span> <span class="dv">60</span>]},</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>[<span class="st">"1 GPU"</span>, <span class="st">"4 GPUs"</span>],</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>timings[<span class="st">"speed-up"</span>] <span class="op">=</span> (time_1gpu <span class="op">/</span> <span class="dv">60</span> <span class="op">/</span> timings[<span class="st">"minutes"</span>]).<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(timings.<span class="bu">round</span>(<span class="dv">2</span>))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> timings[<span class="st">"minutes"</span>].plot(kind<span class="op">=</span><span class="st">"barh"</span>, color<span class="op">=</span>[<span class="st">"#b895ce"</span>, <span class="st">"#3d0251"</span>], title<span class="op">=</span><span class="st">"Training time on 1 and 4 GPUs"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>perfect <span class="op">=</span> ax.axvline(time_1gpu <span class="op">/</span> <span class="dv">60</span> <span class="op">/</span> <span class="dv">4</span>, color<span class="op">=</span><span class="st">"grey"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>, label<span class="op">=</span><span class="st">"Perfect 4x speed-up"</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>ax.bar_label(ax.containers[<span class="dv">0</span>], labels<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>s<span class="sc">:.1f}</span><span class="ss">x"</span> <span class="cf">for</span> s <span class="kw">in</span> timings[<span class="st">"speed-up"</span>]], padding<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>ax.invert_yaxis()</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="dv">0</span>, timings[<span class="st">"minutes"</span>].<span class="bu">max</span>() <span class="op">*</span> <span class="fl">1.2</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Minutes"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>plt.legend(handles<span class="op">=</span>[perfect])</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Each bar shows how long a run took, and the number at the end is its speed-up compared with 1 GPU. The dashed line shows where the 4-GPU bar would end if four GPUs were exactly four times faster. The gap between the end of the 4-GPU bar and the dashed line is the time spent on the extra work that comes with using several GPUs.</p>
+<p>It almost certainly wasn’t four times faster. There are a few reasons for this:</p>
+<ul>
+<li>It takes time to start four processes and connect the GPUs to each other, and for a short training run that’s a large part of the total time.</li>
+<li>After every batch, the GPUs have to stop and share their gradients.</li>
+<li>The CPU workers now have to load images for four GPUs instead of one.</li>
+</ul>
+<p>With a small model and dataset like ours, these costs can cancel out most of the benefit of the extra GPUs. With large models and datasets that take hours or days to train, they matter much less, and more GPUs can make a big difference.</p>
+</section>
+<section id="is-the-model-just-as-good" class="level2">
+<h2 class="anchored" data-anchor-id="is-the-model-just-as-good">5.5 Is the model just as good?</h2>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
+</div>
+<div class="sourceCode" id="cb3" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>true, pred <span class="op">=</span> evaluate(RUNS_DIR <span class="op">/</span> <span class="st">"4gpu"</span> <span class="op">/</span> <span class="st">"weights"</span> <span class="op">/</span> <span class="st">"best.pt"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(true, pred, digits<span class="op">=</span><span class="dv">3</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_predictions(true, pred, cmap<span class="op">=</span><span class="st">"Purples"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"4 GPUs: test set"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The results should be close to the 1-GPU model’s, but not exactly the same. The images are shuffled differently and each batch is shared out between the GPUs, so the training doesn’t follow exactly the same path. With only 108 fractures in the test set, a difference of a few fractures found or missed is within normal run-to-run variation.</p>
+</section>
+<section id="exercise" class="level2">
+<h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
+<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Fill in this table with the results from the demo:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Run</th>
+<th>Minutes</th>
+<th>Speed-up</th>
+<th>Fractured recall</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1 GPU</td>
+<td></td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>4 GPUs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li>How much faster was the 4-GPU run? Was the speed-up close to 4?</li>
+<li>Did the model get better, get worse or stay about the same?</li>
+<li>What do you think would happen with a much bigger model, such as <code>yolov8x-cls.pt</code>?</li>
 </ol>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Show answer">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -247,9 +402,14 @@ Show answer
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Add the answer here.</p>
+<p>The numbers will vary from run to run, but this is what usually happens:</p>
+<ol type="1">
+<li>The 4-GPU run should be faster, but not four times faster. In our dry run it was about 2.4 times faster. For a job this small, starting up, sharing gradients and loading data take up a lot of the time.</li>
+<li>About the same. Small differences in recall are normal between runs.</li>
+<li>A bigger model does much more calculation for each image, so the GPUs spend more of their time calculating and less time waiting. The speed-up from four GPUs gets closer to four. (You’d need to download the bigger model’s weights first.)</li>
+</ol>
 </div>
 </div>
 </div>
@@ -325,7 +485,7 @@ Show answer
   if (menu) {
     var res = document.createElement("div");
     res.className = "res";
-    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+    [["Notebook", "hpc-for-ai.ipynb"]].forEach(function (r) {
       var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
     });
     menu.parentNode.insertBefore(res, menu);
