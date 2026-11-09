@@ -1,0 +1,212 @@
+[
+  {
+    "objectID": "pages/01-why-hpc.html",
+    "href": "pages/01-why-hpc.html",
+    "title": "Why HPC for AI?",
+    "section": "",
+    "text": "Why can’t I just use my laptop?",
+    "crumbs": [
+      "Why HPC for AI?"
+    ]
+  },
+  {
+    "objectID": "pages/01-why-hpc.html#overview",
+    "href": "pages/01-why-hpc.html#overview",
+    "title": "Why HPC for AI?",
+    "section": "Overview",
+    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "crumbs": [
+      "Why HPC for AI?"
+    ]
+  },
+  {
+    "objectID": "pages/06-good-practice.html",
+    "href": "pages/06-good-practice.html",
+    "title": "Good practice and next steps",
+    "section": "",
+    "text": "How do I use a shared supercomputer well?",
+    "crumbs": [
+      "Good practice and next steps"
+    ]
+  },
+  {
+    "objectID": "pages/06-good-practice.html#overview",
+    "href": "pages/06-good-practice.html#overview",
+    "title": "Good practice and next steps",
+    "section": "Overview",
+    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "crumbs": [
+      "Good practice and next steps"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html",
+    "href": "pages/03-fracatlas.html",
+    "title": "Meet FracAtlas",
+    "section": "",
+    "text": "What does our data look like?",
+    "crumbs": [
+      "Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#overview",
+    "href": "pages/03-fracatlas.html#overview",
+    "title": "Meet FracAtlas",
+    "section": "Overview",
+    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "crumbs": [
+      "Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/00-before.html",
+    "href": "pages/00-before.html",
+    "title": "Before the course",
+    "section": "",
+    "text": "What do I need to do first?",
+    "crumbs": [
+      "Before the course"
+    ]
+  },
+  {
+    "objectID": "pages/00-before.html#overview",
+    "href": "pages/00-before.html#overview",
+    "title": "Before the course",
+    "section": "Overview",
+    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "crumbs": [
+      "Before the course"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "HPC for AI - Part 1",
+    "section": "",
+    "text": "Can we teach a computer to spot a fracture?\nSlides, notebook and notes for the course. Use the menu on the left to move between sections, or the Present button (top right) to show a section as slides.",
+    "crumbs": [
+      "HPC for AI - Part 1"
+    ]
+  },
+  {
+    "objectID": "index.html#learning-outcomes",
+    "href": "index.html#learning-outcomes",
+    "title": "HPC for AI - Part 1",
+    "section": "Learning outcomes",
+    "text": "Learning outcomes\nBy the end of this course, you will:\n\nUnderstand when and why AI projects need high-performance computing (HPC).\nBe able to start a JupyterHub session with GPUs on Isambard-AI.\nBe able to prepare an image dataset and train an image classification model on a GPU.\nKnow how to judge a classifier on imbalanced medical data.\nUnderstand how training a model on multiple GPUs works.\nKnow how to work considerately on a shared supercomputer.",
+    "crumbs": [
+      "HPC for AI - Part 1"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html",
+    "href": "pages/04-one-gpu.html",
+    "title": "Training on one GPU",
+    "section": "",
+    "text": "Can a computer learn to spot a fracture?",
+    "crumbs": [
+      "Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#the-model",
+    "href": "pages/04-one-gpu.html#the-model",
+    "title": "Training on one GPU",
+    "section": "The model",
+    "text": "The model\nWe’ll use YOLOv8n-cls, a small image classifier. Training one from scratch needs far more than 4,000 images, so we use transfer learning: start from a model that has seen over a million everyday photos, then fine-tune it on X-rays.\n\n\n\n\n\n\nGoing deeper: why does transfer learning work on X-rays?\n\n\n\n\n\nEarly layers learn general features such as edges and textures. Fine-tuning mostly adjusts the later layers, so far fewer examples are needed.",
+    "crumbs": [
+      "Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#training-settings",
+    "href": "pages/04-one-gpu.html#training-settings",
+    "title": "Training on one GPU",
+    "section": "Training settings",
+    "text": "Training settings\n\n\nhpc-for-ai.ipynb\n\nEPOCHS   = 50\nIMG_SIZE = 512\nBATCH    = 64\nWORKERS  = 8\n\n\n\n\nSetting\nWhat it means\n\n\n\n\nEPOCHS\nTimes the model sees every training image\n\n\nIMG_SIZE\nWidth and height of the square each image becomes\n\n\n\n\n\n\n\n\n\n\nExercise\n\n\n\n\nWhat is the recall for the fractured class, in plain English?\n\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nA recall of 0.70 means 70% of fractures were found.",
+    "crumbs": [
+      "Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/07-credits.html",
+    "href": "pages/07-credits.html",
+    "title": "Credits, acknowledgements and references",
+    "section": "",
+    "text": "Developed by the Jean Golding Institute, University of Bristol. Based on Evie Grace’s Radiograph-Reader project.",
+    "crumbs": [
+      "Credits, acknowledgements and references"
+    ]
+  },
+  {
+    "objectID": "pages/07-credits.html#credits",
+    "href": "pages/07-credits.html#credits",
+    "title": "Credits, acknowledgements and references",
+    "section": "",
+    "text": "Developed by the Jean Golding Institute, University of Bristol. Based on Evie Grace’s Radiograph-Reader project.",
+    "crumbs": [
+      "Credits, acknowledgements and references"
+    ]
+  },
+  {
+    "objectID": "pages/07-credits.html#acknowledgements",
+    "href": "pages/07-credits.html#acknowledgements",
+    "title": "Credits, acknowledgements and references",
+    "section": "Acknowledgements",
+    "text": "Acknowledgements\nComputing time on Isambard-AI is provided by the Bristol Centre for Supercomputing (BriCS) as part of the UK AI Research Resource.",
+    "crumbs": [
+      "Credits, acknowledgements and references"
+    ]
+  },
+  {
+    "objectID": "pages/07-credits.html#references",
+    "href": "pages/07-credits.html#references",
+    "title": "Credits, acknowledgements and references",
+    "section": "References",
+    "text": "References\nAbedeen, I., Rahman, M. A., Prottyasha, F. Z., Ahmed, T., Chowdhury, T. M. & Shatabda, S. (2023). FracAtlas: A Dataset for Fracture Classification, Localization and Segmentation of Musculoskeletal Radiographs. Scientific Data, 10, 521. https://doi.org/10.1038/s41597-023-02432-4\nThe dataset is available from figshare under a CC BY 4.0 licence.",
+    "crumbs": [
+      "Credits, acknowledgements and references"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html",
+    "href": "pages/05-four-gpus.html",
+    "title": "Scaling to four GPUs",
+    "section": "",
+    "text": "Is more GPUs always faster?",
+    "crumbs": [
+      "Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#overview",
+    "href": "pages/05-four-gpus.html#overview",
+    "title": "Scaling to four GPUs",
+    "section": "Overview",
+    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "crumbs": [
+      "Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/02-isambard.html",
+    "href": "pages/02-isambard.html",
+    "title": "Getting onto Isambard-AI",
+    "section": "",
+    "text": "How do I get a GPU?",
+    "crumbs": [
+      "Getting onto Isambard-AI"
+    ]
+  },
+  {
+    "objectID": "pages/02-isambard.html#overview",
+    "href": "pages/02-isambard.html#overview",
+    "title": "Getting onto Isambard-AI",
+    "section": "Overview",
+    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "crumbs": [
+      "Getting onto Isambard-AI"
+    ]
+  }
+]
