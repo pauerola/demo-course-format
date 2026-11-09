@@ -1,0 +1,61 @@
+/*-- scss:defaults --*/
+$primary:   #ab1f2d;   // Bristol red: assumed, replace with the exact value
+$link-color: #ab1f2d;
+$font-family-sans-serif: "Public Sans", system-ui, sans-serif;
+$headings-font-family: "Bricolage Grotesque", system-ui, sans-serif;
+$font-family-monospace: "JetBrains Mono", ui-monospace, monospace;
+$sidebar-bg: #ffffff;
+$callout-color-tip: #2f7d4f;
+$callout-color-note: #3b6fb6;
+$callout-color-caution: #a8740a;
+
+/*-- scss:rules --*/
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/* logo and bold centred title at the top of the left rail, as in intro-python-1 */
+.sidebar-title { text-align: center; font-weight: 700; font-size: 1.5rem; color: $primary; }
+.sidebar-logo-link { display: block; margin-bottom: 1.9em; text-align: center; }
+.sidebar-tools-main { justify-content: center; margin-bottom: 1.9em; }
+.sidebar-logo { max-height: 80px; width: auto; }
+
+/* extra space above the first menu item */
+#quarto-sidebar .sidebar-menu-container { margin-top: 1.7rem; }
+
+/* slim left rail, current section only */
+#quarto-sidebar { font-size: .9rem; }
+.sidebar-item-container .active { color: $primary; font-weight: 600; }
+.sidebar nav[role=doc-toc] ul > li > a { padding: 3px 8px; }
+
+/* one reading column */
+main.content { max-width: 760px; margin-inline: auto; }
+.content p, .content li { max-width: 65ch; }
+h2 { margin-top: 2.2rem; }
+
+/* section opener: question + key points */
+.section-question { font: 500 1.25rem/1.4 $headings-font-family; color: $primary; }
+.section-meta { color: #6b5f75; font-size: .85rem; }
+
+/* callouts: key points on top, exercise at the end, answer folded */
+.callout-tip.key-points { border-left-width: 4px; }
+.callout-note.exercise .callout-title-container { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; }
+
+/* "Going deeper": a folded callout, hidden in present mode */
+.callout.deeper { border-color: var(--bs-border-color); }
+.callout.deeper .callout-header { font-weight: 600; font-size: .9rem; }
+
+/* notebook name above code cells */
+div.sourceCode[data-file]::before {
+  content: attr(data-file);
+  display: block; font: 500 .72rem $font-family-monospace; color: #6b5f75; padding: 6px 14px;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+/* present mode: one subsection per screen, large type, no folds */
+body.present #quarto-sidebar, body.present #quarto-margin-sidebar { display: none; }
+body.present main.content { max-width: 1000px; }
+body.present section.level2 { display: none; min-height: 80vh; align-content: center; }
+body.present section.level2.cur { display: grid; }
+body.present section.level2 > p { font-size: clamp(1.1rem, 2vw, 1.45rem); max-width: 46ch; }
+body.present section.level2 > h2 { font-size: clamp(2rem, 4.4vw, 3.2rem); }
+body.present .callout.deeper, body.present .nav-footer { display: none; }
+#present-toggle { position: fixed; top: 10px; right: 16px; z-index: 50; }

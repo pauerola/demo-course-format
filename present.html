@@ -1,0 +1,22 @@
+<button id="present-toggle" class="btn btn-sm btn-outline-primary" type="button">Present</button>
+<script>
+(function () {
+  var b = document.body, btn = document.getElementById("present-toggle");
+  var secs = [].slice.call(document.querySelectorAll("main section.level2")), i = 0;
+  function show(n) {
+    i = Math.max(0, Math.min(secs.length - 1, n));
+    secs.forEach(function (s, k) { s.classList.toggle("cur", k === i); });
+    window.scrollTo(0, 0);
+  }
+  btn.onclick = function () {
+    var on = b.classList.toggle("present");
+    btn.textContent = on ? "Read" : "Present";
+    if (on) show(0); else secs.forEach(function (s) { s.classList.remove("cur"); });
+  };
+  document.addEventListener("keydown", function (e) {
+    if (!b.classList.contains("present")) return;
+    if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); show(i + 1); }
+    if (e.key === "ArrowLeft"  || e.key === "PageUp")   { e.preventDefault(); show(i - 1); }
+  });
+})();
+</script>

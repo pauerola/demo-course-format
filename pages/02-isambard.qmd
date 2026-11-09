@@ -1,0 +1,11 @@
+---
+title: "Getting onto Isambard-AI"
+---
+
+::: section-question
+How do I get a GPU?
+:::
+
+## Overview
+
+Add the content for this section here. Keep each `##` subsection to a few sentences, one code cell and at most one figure.

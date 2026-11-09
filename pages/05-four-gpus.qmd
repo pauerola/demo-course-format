@@ -1,0 +1,11 @@
+---
+title: "Scaling to four GPUs"
+---
+
+::: section-question
+Is more GPUs always faster?
+:::
+
+## Overview
+
+Add the content for this section here. Keep each `##` subsection to a few sentences, one code cell and at most one figure.

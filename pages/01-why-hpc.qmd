@@ -1,0 +1,11 @@
+---
+title: "Why HPC for AI?"
+---
+
+::: section-question
+Why can't I just use my laptop?
+:::
+
+## Overview
+
+Add the content for this section here. Keep each `##` subsection to a few sentences, one code cell and at most one figure.

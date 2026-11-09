@@ -1,0 +1,11 @@
+---
+title: "Meet FracAtlas"
+---
+
+::: section-question
+What does our data look like?
+:::
+
+## Overview
+
+Add the content for this section here. Keep each `##` subsection to a few sentences, one code cell and at most one figure.

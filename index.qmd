@@ -1,0 +1,22 @@
+---
+title: "HPC for AI - Part 1"
+subtitle: "Training a computer vision model on Isambard-AI"
+author: "Jean Golding Institute"
+---
+
+::: section-question
+Can we teach a computer to spot a fracture?
+:::
+
+Slides, notebook and notes for the course. Use the menu on the left to move between sections, or the **Present** button (top right) to show a section as slides.
+
+## Learning outcomes
+
+By the end of this course, you will:
+
+- Understand when and why AI projects need high-performance computing (HPC).
+- Be able to start a JupyterHub session with GPUs on Isambard-AI.
+- Be able to prepare an image dataset and train an image classification model on a GPU.
+- Know how to judge a classifier on imbalanced medical data.
+- Understand how training a model on multiple GPUs works.
+- Know how to work considerately on a shared supercomputer.

@@ -1,0 +1,11 @@
+---
+title: "Before the course"
+---
+
+::: section-question
+What do I need to do first?
+:::
+
+## Overview
+
+Add the content for this section here. Keep each `##` subsection to a few sentences, one code cell and at most one figure.

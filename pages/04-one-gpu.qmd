@@ -1,0 +1,49 @@
+---
+title: "Training on one GPU"
+---
+
+::: section-question
+Can a computer learn to spot a fracture?
+:::
+
+::: section-meta
+About 25 min · notebook cells 14–22 · 1 exercise
+:::
+
+::: {.callout-tip .key-points title="In short"}
+- Start from a model trained on everyday photos, then fine-tune it on our X-rays.
+- `device=0` trains on one GPU; the GPU dashboard shows it working.
+- Compare accuracy with a baseline. For imbalanced data, look at recall.
+:::
+
+## The model
+
+We'll use **YOLOv8n-cls**, a small image classifier. Training one from scratch needs far more than 4,000 images, so we use **transfer learning**: start from a model that has seen over a million everyday photos, then fine-tune it on X-rays.
+
+::: {.callout-note .deeper collapse="true" title="Going deeper: why does transfer learning work on X-rays?"}
+Early layers learn general features such as edges and textures. Fine-tuning mostly adjusts the later layers, so far fewer examples are needed.
+:::
+
+## Training settings
+
+```{.python filename="hpc-for-ai.ipynb"}
+EPOCHS   = 50
+IMG_SIZE = 512
+BATCH    = 64
+WORKERS  = 8
+```
+
+| Setting | What it means |
+|---|---|
+| `EPOCHS` | Times the model sees every training image |
+| `IMG_SIZE` | Width and height of the square each image becomes |
+
+<!-- ...one `##` per subsection; keep each to a few sentences, one code cell, one figure -->
+
+::: {.callout-note .exercise title="Exercise"}
+1. What is the recall for the fractured class, in plain English?
+
+::: {.callout-caution collapse="true" title="Answer"}
+A recall of 0.70 means 70% of fractures were found.
+:::
+:::

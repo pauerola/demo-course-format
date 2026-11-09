@@ -1,0 +1,46 @@
+project:
+  type: website
+
+website:
+  title: "HPC for AI · Part 1"
+  search: false                 # or true; sits at the top of the left rail
+  bread-crumbs: false
+  page-navigation: true         # prev/next cards at the bottom of every section
+  back-to-top-navigation: false
+  sidebar:
+    style: docked
+    logo: assets/logo.png       # University of Bristol / Jean Golding Institute logo
+    collapse-level: 1           # only the current section opens out
+    search: false
+    tools:
+      - icon: easel
+        text: Slides
+        href: slides.html
+      - icon: journal-code
+        text: Notebook
+        href: hpc-for-ai.ipynb
+    contents:
+      - index.qmd
+      - pages/00-before.qmd   # section 0
+      - pages/01-why-hpc.qmd
+      - pages/02-isambard.qmd
+      - pages/03-fracatlas.qmd
+      - pages/04-one-gpu.qmd
+      - pages/05-four-gpus.qmd
+      - pages/06-good-practice.qmd
+      - pages/07-credits.qmd           # credits, acknowledgements, references
+
+format:
+  html:
+    theme: [default, custom.scss]
+    toc: false                  # no right-hand contents: the left rail lists sections
+    page-layout: article
+    code-copy: true
+    code-fold: false
+    include-after-body:
+      - present.html
+      - dyslexia.html
+    grid:
+      sidebar-width: 270px
+      body-width: 760px
+      margin-width: 0px

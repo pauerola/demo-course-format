@@ -1,0 +1,26 @@
+<style>
+  .dys-wrap { position: sticky; bottom: 0; margin-top: 1.5rem; padding: .75rem 0; background: inherit; border-top: 1px solid var(--bs-border-color); }
+  .dys-switch { display: flex; align-items: center; gap: .6rem; font-size: .85rem; }
+  body.dys, body.dys #quarto-content, body.dys #quarto-sidebar, body.dys .sidebar,
+  body.dys #quarto-document-content, body.dys .dys-wrap { background-color: #fff8d1 !important; }
+  body.dys pre, body.dys code { background-color: #f6edc0; }
+</style>
+<script>
+(function () {
+  var side = document.querySelector("#quarto-sidebar .sidebar-menu-container");
+  if (!side) return;
+  var wrap = document.createElement("div");
+  wrap.className = "dys-wrap";
+  wrap.innerHTML = '<div class="form-check form-switch dys-switch" title="Softer, pale yellow page, which some readers find easier on the eyes">' +
+    '<input class="form-check-input" type="checkbox" role="switch" id="dys-toggle">' +
+    '<label class="form-check-label" for="dys-toggle">Comfortable reading</label></div>';
+  side.appendChild(wrap);
+  var box = wrap.querySelector("input");
+  function set(on) {
+    document.body.classList.toggle("dys", on); box.checked = on;
+    try { localStorage.setItem("dys", on ? "1" : "0"); } catch (e) {}
+  }
+  box.addEventListener("change", function () { set(box.checked); });
+  try { if (localStorage.getItem("dys") === "1") set(true); } catch (e) {}
+})();
+</script>

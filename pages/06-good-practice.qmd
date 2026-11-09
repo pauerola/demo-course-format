@@ -1,0 +1,11 @@
+---
+title: "Good practice and next steps"
+---
+
+::: section-question
+How do I use a shared supercomputer well?
+:::
+
+## Overview
+
+Add the content for this section here. Keep each `##` subsection to a few sentences, one code cell and at most one figure.
