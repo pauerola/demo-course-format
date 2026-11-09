@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://pauerola.github.io/demo-course-format/pages/01-why-hpc.html</loc>
-    <lastmod>2026-11-09T09:49:00.058Z</lastmod>
-  </url>
-  <url>
-    <loc>https://pauerola.github.io/demo-course-format/pages/06-good-practice.html</loc>
-    <lastmod>2026-11-09T09:49:00.059Z</lastmod>
-  </url>
-  <url>
-    <loc>https://pauerola.github.io/demo-course-format/pages/03-fracatlas.html</loc>
-    <lastmod>2026-11-09T09:49:00.058Z</lastmod>
-  </url>
-  <url>
-    <loc>https://pauerola.github.io/demo-course-format/pages/00-before.html</loc>
-    <lastmod>2026-11-09T09:49:00.057Z</lastmod>
-  </url>
-  <url>
-    <loc>https://pauerola.github.io/demo-course-format/index.html</loc>
-    <lastmod>2026-11-09T09:49:00.057Z</lastmod>
-  </url>
-  <url>
     <loc>https://pauerola.github.io/demo-course-format/slides.html</loc>
     <lastmod>2026-11-09T09:54:47.000Z</lastmod>
   </url>
   <url>
+    <loc>https://pauerola.github.io/demo-course-format/pages/06-good-practice.html</loc>
+    <lastmod>2026-11-09T09:54:47.000Z</lastmod>
+  </url>
+  <url>
     <loc>https://pauerola.github.io/demo-course-format/pages/04-one-gpu.html</loc>
-    <lastmod>2026-11-09T09:49:00.058Z</lastmod>
-  </url>
-  <url>
-    <loc>https://pauerola.github.io/demo-course-format/pages/07-credits.html</loc>
-    <lastmod>2026-11-09T09:49:00.059Z</lastmod>
-  </url>
-  <url>
-    <loc>https://pauerola.github.io/demo-course-format/pages/05-four-gpus.html</loc>
-    <lastmod>2026-11-09T09:49:00.058Z</lastmod>
+    <lastmod>2026-11-09T09:54:47.000Z</lastmod>
   </url>
   <url>
     <loc>https://pauerola.github.io/demo-course-format/pages/02-isambard.html</loc>
-    <lastmod>2026-11-09T09:49:00.058Z</lastmod>
+    <lastmod>2026-11-09T09:54:47.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pauerola.github.io/demo-course-format/pages/00-before.html</loc>
+    <lastmod>2026-11-09T09:54:47.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pauerola.github.io/demo-course-format/index.html</loc>
+    <lastmod>2026-11-09T09:54:47.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pauerola.github.io/demo-course-format/pages/01-why-hpc.html</loc>
+    <lastmod>2026-11-09T09:54:47.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pauerola.github.io/demo-course-format/pages/03-fracatlas.html</loc>
+    <lastmod>2026-11-09T09:54:47.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pauerola.github.io/demo-course-format/pages/05-four-gpus.html</loc>
+    <lastmod>2026-11-09T09:54:47.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pauerola.github.io/demo-course-format/pages/07-credits.html</loc>
+    <lastmod>2026-11-09T09:54:50.000Z</lastmod>
   </url>
 </urlset>

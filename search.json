@@ -1,62 +1,169 @@
 [
   {
-    "objectID": "pages/01-why-hpc.html",
-    "href": "pages/01-why-hpc.html",
-    "title": "Why HPC for AI?",
-    "section": "",
-    "text": "Why can’t I just use my laptop?",
-    "crumbs": [
-      "Why HPC for AI?"
-    ]
-  },
-  {
-    "objectID": "pages/01-why-hpc.html#overview",
-    "href": "pages/01-why-hpc.html#overview",
-    "title": "Why HPC for AI?",
-    "section": "Overview",
-    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
-    "crumbs": [
-      "Why HPC for AI?"
-    ]
+    "objectID": "slides.html#placeholder-slides",
+    "href": "slides.html#placeholder-slides",
+    "title": "HPC for AI - Part 1",
+    "section": "Placeholder slides",
+    "text": "Placeholder slides\nReplace this file with the slides used in the session (or point the Slides button in _quarto.yml at your own file)."
   },
   {
     "objectID": "pages/06-good-practice.html",
     "href": "pages/06-good-practice.html",
     "title": "Good practice and next steps",
     "section": "",
-    "text": "How do I use a shared supercomputer well?",
+    "text": "Section 6 of 7",
     "crumbs": [
-      "Good practice and next steps"
+      "6  Good practice"
     ]
   },
   {
-    "objectID": "pages/06-good-practice.html#overview",
-    "href": "pages/06-good-practice.html#overview",
+    "objectID": "pages/06-good-practice.html#first-subsection",
+    "href": "pages/06-good-practice.html#first-subsection",
     "title": "Good practice and next steps",
-    "section": "Overview",
-    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "section": "6.1 First subsection",
+    "text": "6.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
     "crumbs": [
-      "Good practice and next steps"
+      "6  Good practice"
     ]
   },
   {
-    "objectID": "pages/03-fracatlas.html",
-    "href": "pages/03-fracatlas.html",
-    "title": "Meet FracAtlas",
+    "objectID": "pages/06-good-practice.html#second-subsection",
+    "href": "pages/06-good-practice.html#second-subsection",
+    "title": "Good practice and next steps",
+    "section": "6.2 Second subsection",
+    "text": "6.2 Second subsection\nAdd the content here.",
+    "crumbs": [
+      "6  Good practice"
+    ]
+  },
+  {
+    "objectID": "pages/06-good-practice.html#exercise",
+    "href": "pages/06-good-practice.html#exercise",
+    "title": "Good practice and next steps",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "crumbs": [
+      "6  Good practice"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html",
+    "href": "pages/04-one-gpu.html",
+    "title": "Training on one GPU",
     "section": "",
-    "text": "What does our data look like?",
+    "text": "Section 4 of 7",
     "crumbs": [
-      "Meet FracAtlas"
+      "4  Training on one GPU"
     ]
   },
   {
-    "objectID": "pages/03-fracatlas.html#overview",
-    "href": "pages/03-fracatlas.html#overview",
-    "title": "Meet FracAtlas",
-    "section": "Overview",
-    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "objectID": "pages/04-one-gpu.html#the-model",
+    "href": "pages/04-one-gpu.html#the-model",
+    "title": "Training on one GPU",
+    "section": "4.1 The model",
+    "text": "4.1 The model\nWe’ll use YOLOv8n-cls, a small image classifier from the Ultralytics library. It’s a convolutional neural network, which picks out edges, textures and shapes in different parts of an image.\nTraining one from scratch would need far more than 4,000 images. Instead we use transfer learning: start from a model that has seen over a million everyday photos (ImageNet), then fine-tune it on X-rays.\n\n\n\n\n\n\nGoing deeper: why does transfer learning work on X-rays?\n\n\n\n\n\nThe early layers of a network learn general features such as edges and textures, which are useful for almost any image. Fine-tuning mostly adjusts the later layers to the new task, so far fewer examples are needed.",
     "crumbs": [
-      "Meet FracAtlas"
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#training-settings",
+    "href": "pages/04-one-gpu.html#training-settings",
+    "title": "Training on one GPU",
+    "section": "4.2 Training settings",
+    "text": "4.2 Training settings\nFour settings control the run. You can change them in the exercise.\n\n\nhpc-for-ai.ipynb\n\nEPOCHS   = 50\nIMG_SIZE = 512\nBATCH    = 64\nWORKERS  = 8\n\n\n\n\nSetting\nWhat it means\n\n\n\n\nEPOCHS\nTimes the model sees every training image\n\n\nIMG_SIZE\nWidth and height of the square each image becomes\n\n\nBATCH\nImages seen before the weights are updated\n\n\nWORKERS\nCPU processes loading images so the GPU isn’t waiting",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#train",
+    "href": "pages/04-one-gpu.html#train",
+    "title": "Training on one GPU",
+    "section": "4.3 Train",
+    "text": "4.3 Train\nOpen the GPU dashboard first, then run the cell. Each epoch prints the loss and the validation accuracy.\n\n\nhpc-for-ai.ipynb\n\nmodel = YOLO(WEIGHTS)\nmodel.train(\n    data=str(SPLIT_DIR), epochs=EPOCHS, imgsz=IMG_SIZE,\n    batch=BATCH, workers=WORKERS,\n    device=0,   # one GPU\n    project=str(RUNS_DIR), name=\"1gpu\", seed=42,\n)\n\n\n\n\n\n\n\nWhat the other arguments do\n\n\n\n\n\nproject and name decide where results are saved (runs/1gpu in your scratch folder). seed makes the run repeatable.",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#how-did-training-go",
+    "href": "pages/04-one-gpu.html#how-did-training-go",
+    "title": "Training on one GPU",
+    "section": "4.4 How did training go?",
+    "text": "4.4 How did training go?\nCompare the two loss curves. If training loss keeps falling while validation loss rises, the model is overfitting. That’s why Ultralytics keeps the best epoch as best.pt.",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#test-the-model",
+    "href": "pages/04-one-gpu.html#test-the-model",
+    "title": "Training on one GPU",
+    "section": "4.5 Test the model",
+    "text": "4.5 Test the model\nClassify every test image with best.pt and compare with the real labels. In the confusion matrix, the diagonal is correct. A missed fracture sits in the fractured row, not-fractured column.\n\n\n\n\npredicted fractured\npredicted not\n\n\n\n\nreal fractured\nfound\nmissed\n\n\nreal not\nfalse alarm\ncorrect\n\n\n\n\n\n\n\n\n\nReading the classification report\n\n\n\n\n\n\n\n\nScore\nFor the fractured class\n\n\n\n\nPrecision\nWhen it says “fractured”, how often is it right?\n\n\nRecall\nWhat share of real fractures did it find?\n\n\nF1\nOne score combining the two",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#is-that-accuracy-any-good",
+    "href": "pages/04-one-gpu.html#is-that-accuracy-any-good",
+    "title": "Training on one GPU",
+    "section": "4.6 Is that accuracy any good?",
+    "text": "4.6 Is that accuracy any good?\nMost images show no fracture, so a “model” that always says not fractured would be right over 80% of the time and find nothing. Accuracy alone misleads on imbalanced data.\nFor triage, recall on the fractured class matters most. A missed fracture is worse than a false alarm a clinician can rule out.",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/04-one-gpu.html#exercise",
+    "href": "pages/04-one-gpu.html#exercise",
+    "title": "Training on one GPU",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nWhat is the recall for the fractured class, in plain English?\nHow many real fractures in the test set did the model miss?\nWould you use it to decide which X-rays to look at first?\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nA recall of 0.70 means 70% of fractures were found and 30% missed. Missed fractures are in the fractured row, not_fractured column. Almost certainly not yet: you’d want to know how it does at other hospitals, on each body region, and with a split by patient.",
+    "crumbs": [
+      "4  Training on one GPU"
+    ]
+  },
+  {
+    "objectID": "pages/02-isambard.html",
+    "href": "pages/02-isambard.html",
+    "title": "Getting onto Isambard-AI",
+    "section": "",
+    "text": "Section 2 of 7",
+    "crumbs": [
+      "2  Getting onto Isambard-AI"
+    ]
+  },
+  {
+    "objectID": "pages/02-isambard.html#first-subsection",
+    "href": "pages/02-isambard.html#first-subsection",
+    "title": "Getting onto Isambard-AI",
+    "section": "2.1 First subsection",
+    "text": "2.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
+    "crumbs": [
+      "2  Getting onto Isambard-AI"
+    ]
+  },
+  {
+    "objectID": "pages/02-isambard.html#second-subsection",
+    "href": "pages/02-isambard.html#second-subsection",
+    "title": "Getting onto Isambard-AI",
+    "section": "2.2 Second subsection",
+    "text": "2.2 Second subsection\nAdd the content here.",
+    "crumbs": [
+      "2  Getting onto Isambard-AI"
+    ]
+  },
+  {
+    "objectID": "pages/02-isambard.html#exercise",
+    "href": "pages/02-isambard.html#exercise",
+    "title": "Getting onto Isambard-AI",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "crumbs": [
+      "2  Getting onto Isambard-AI"
     ]
   },
   {
@@ -64,19 +171,19 @@
     "href": "pages/00-before.html",
     "title": "Before the course",
     "section": "",
-    "text": "What do I need to do first?",
+    "text": "Section 0 of 7",
     "crumbs": [
-      "Before the course"
+      "0  Before the course"
     ]
   },
   {
-    "objectID": "pages/00-before.html#overview",
-    "href": "pages/00-before.html#overview",
+    "objectID": "pages/00-before.html#what-youll-need",
+    "href": "pages/00-before.html#what-youll-need",
     "title": "Before the course",
-    "section": "Overview",
-    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
+    "section": "0.1 What you’ll need",
+    "text": "0.1 What you’ll need\n\nAn Isambard-AI account that has been added to the course project. We’ll email you an invitation before the course.\nA UNIX username, set in the BriCS portal. JupyterHub won’t start without one.\nA web browser. Everything happens in the browser, so you don’t need to install anything.",
     "crumbs": [
-      "Before the course"
+      "0  Before the course"
     ]
   },
   {
@@ -84,9 +191,19 @@
     "href": "index.html",
     "title": "HPC for AI - Part 1",
     "section": "",
-    "text": "Can we teach a computer to spot a fracture?\nSlides, notebook and notes for the course. Use the menu on the left to move between sections, or the Present button (top right) to show a section as slides.",
+    "text": "Can we teach a computer to spot a fracture?",
     "crumbs": [
-      "HPC for AI - Part 1"
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#about-this-course",
+    "href": "index.html#about-this-course",
+    "title": "HPC for AI - Part 1",
+    "section": "About this course",
+    "text": "About this course\nUse the menu on the left to move between sections, or the Present switch in the top bar to show a section as slides. The slides used in the session, the notebook and the setup notes are linked at the top of the menu.",
+    "crumbs": [
+      "Home"
     ]
   },
   {
@@ -96,44 +213,127 @@
     "section": "Learning outcomes",
     "text": "Learning outcomes\nBy the end of this course, you will:\n\nUnderstand when and why AI projects need high-performance computing (HPC).\nBe able to start a JupyterHub session with GPUs on Isambard-AI.\nBe able to prepare an image dataset and train an image classification model on a GPU.\nKnow how to judge a classifier on imbalanced medical data.\nUnderstand how training a model on multiple GPUs works.\nKnow how to work considerately on a shared supercomputer.",
     "crumbs": [
-      "HPC for AI - Part 1"
+      "Home"
     ]
   },
   {
-    "objectID": "slides.html#placeholder-slides",
-    "href": "slides.html#placeholder-slides",
-    "title": "HPC for AI - Part 1",
-    "section": "Placeholder slides",
-    "text": "Placeholder slides\nReplace this file with the slides used in the session (or point the Slides button in _quarto.yml at your own file)."
-  },
-  {
-    "objectID": "pages/04-one-gpu.html",
-    "href": "pages/04-one-gpu.html",
-    "title": "Training on one GPU",
+    "objectID": "pages/01-why-hpc.html",
+    "href": "pages/01-why-hpc.html",
+    "title": "Why HPC for AI?",
     "section": "",
-    "text": "Can a computer learn to spot a fracture?",
+    "text": "Section 1 of 7",
     "crumbs": [
-      "Training on one GPU"
+      "1  Why HPC for AI?"
     ]
   },
   {
-    "objectID": "pages/04-one-gpu.html#the-model",
-    "href": "pages/04-one-gpu.html#the-model",
-    "title": "Training on one GPU",
-    "section": "The model",
-    "text": "The model\nWe’ll use YOLOv8n-cls, a small image classifier. Training one from scratch needs far more than 4,000 images, so we use transfer learning: start from a model that has seen over a million everyday photos, then fine-tune it on X-rays.\n\n\n\n\n\n\nGoing deeper: why does transfer learning work on X-rays?\n\n\n\n\n\nEarly layers learn general features such as edges and textures. Fine-tuning mostly adjusts the later layers, so far fewer examples are needed.",
+    "objectID": "pages/01-why-hpc.html#first-subsection",
+    "href": "pages/01-why-hpc.html#first-subsection",
+    "title": "Why HPC for AI?",
+    "section": "1.1 First subsection",
+    "text": "1.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
     "crumbs": [
-      "Training on one GPU"
+      "1  Why HPC for AI?"
     ]
   },
   {
-    "objectID": "pages/04-one-gpu.html#training-settings",
-    "href": "pages/04-one-gpu.html#training-settings",
-    "title": "Training on one GPU",
-    "section": "Training settings",
-    "text": "Training settings\n\n\nhpc-for-ai.ipynb\n\nEPOCHS   = 50\nIMG_SIZE = 512\nBATCH    = 64\nWORKERS  = 8\n\n\n\n\nSetting\nWhat it means\n\n\n\n\nEPOCHS\nTimes the model sees every training image\n\n\nIMG_SIZE\nWidth and height of the square each image becomes\n\n\n\n\n\n\n\n\n\n\nExercise\n\n\n\n\nWhat is the recall for the fractured class, in plain English?\n\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nA recall of 0.70 means 70% of fractures were found.",
+    "objectID": "pages/01-why-hpc.html#second-subsection",
+    "href": "pages/01-why-hpc.html#second-subsection",
+    "title": "Why HPC for AI?",
+    "section": "1.2 Second subsection",
+    "text": "1.2 Second subsection\nAdd the content here.",
     "crumbs": [
-      "Training on one GPU"
+      "1  Why HPC for AI?"
+    ]
+  },
+  {
+    "objectID": "pages/01-why-hpc.html#exercise",
+    "href": "pages/01-why-hpc.html#exercise",
+    "title": "Why HPC for AI?",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "crumbs": [
+      "1  Why HPC for AI?"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html",
+    "href": "pages/03-fracatlas.html",
+    "title": "Meet FracAtlas",
+    "section": "",
+    "text": "Section 3 of 7",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#first-subsection",
+    "href": "pages/03-fracatlas.html#first-subsection",
+    "title": "Meet FracAtlas",
+    "section": "3.1 First subsection",
+    "text": "3.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#second-subsection",
+    "href": "pages/03-fracatlas.html#second-subsection",
+    "title": "Meet FracAtlas",
+    "section": "3.2 Second subsection",
+    "text": "3.2 Second subsection\nAdd the content here.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/03-fracatlas.html#exercise",
+    "href": "pages/03-fracatlas.html#exercise",
+    "title": "Meet FracAtlas",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "crumbs": [
+      "3  Meet FracAtlas"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html",
+    "href": "pages/05-four-gpus.html",
+    "title": "Scaling to four GPUs",
+    "section": "",
+    "text": "Section 5 of 7",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#first-subsection",
+    "href": "pages/05-four-gpus.html#first-subsection",
+    "title": "Scaling to four GPUs",
+    "section": "5.1 First subsection",
+    "text": "5.1 First subsection\nA few sentences, one code cell and at most one figure.\n\n\n\n\n\n\nGoing deeper: optional detail\n\n\n\n\n\nLonger explanations go in a folded box like this one.",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#second-subsection",
+    "href": "pages/05-four-gpus.html#second-subsection",
+    "title": "Scaling to four GPUs",
+    "section": "5.2 Second subsection",
+    "text": "5.2 Second subsection\nAdd the content here.",
+    "crumbs": [
+      "5  Scaling to four GPUs"
+    ]
+  },
+  {
+    "objectID": "pages/05-four-gpus.html#exercise",
+    "href": "pages/05-four-gpus.html#exercise",
+    "title": "Scaling to four GPUs",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nExercise · 10 min\n\n\n\n\nAdd the exercise here.\n\n\n\n\n\n\n\nShow answer\n\n\n\n\n\nAdd the answer here.",
+    "crumbs": [
+      "5  Scaling to four GPUs"
     ]
   },
   {
@@ -141,19 +341,19 @@
     "href": "pages/07-credits.html",
     "title": "Credits, acknowledgements and references",
     "section": "",
-    "text": "Developed by the Jean Golding Institute, University of Bristol. Based on Evie Grace’s Radiograph-Reader project.",
+    "text": "Section 7 of 7",
     "crumbs": [
-      "Credits, acknowledgements and references"
+      "7  Credits and references"
     ]
   },
   {
     "objectID": "pages/07-credits.html#credits",
     "href": "pages/07-credits.html#credits",
     "title": "Credits, acknowledgements and references",
-    "section": "",
-    "text": "Developed by the Jean Golding Institute, University of Bristol. Based on Evie Grace’s Radiograph-Reader project.",
+    "section": "Credits",
+    "text": "Credits\nDeveloped by the Jean Golding Institute, University of Bristol. Based on Evie Grace’s Radiograph-Reader project.",
     "crumbs": [
-      "Credits, acknowledgements and references"
+      "7  Credits and references"
     ]
   },
   {
@@ -163,7 +363,7 @@
     "section": "Acknowledgements",
     "text": "Acknowledgements\nComputing time on Isambard-AI is provided by the Bristol Centre for Supercomputing (BriCS) as part of the UK AI Research Resource.",
     "crumbs": [
-      "Credits, acknowledgements and references"
+      "7  Credits and references"
     ]
   },
   {
@@ -173,47 +373,7 @@
     "section": "References",
     "text": "References\nAbedeen, I., Rahman, M. A., Prottyasha, F. Z., Ahmed, T., Chowdhury, T. M. & Shatabda, S. (2023). FracAtlas: A Dataset for Fracture Classification, Localization and Segmentation of Musculoskeletal Radiographs. Scientific Data, 10, 521. https://doi.org/10.1038/s41597-023-02432-4\nThe dataset is available from figshare under a CC BY 4.0 licence.",
     "crumbs": [
-      "Credits, acknowledgements and references"
-    ]
-  },
-  {
-    "objectID": "pages/05-four-gpus.html",
-    "href": "pages/05-four-gpus.html",
-    "title": "Scaling to four GPUs",
-    "section": "",
-    "text": "Is more GPUs always faster?",
-    "crumbs": [
-      "Scaling to four GPUs"
-    ]
-  },
-  {
-    "objectID": "pages/05-four-gpus.html#overview",
-    "href": "pages/05-four-gpus.html#overview",
-    "title": "Scaling to four GPUs",
-    "section": "Overview",
-    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
-    "crumbs": [
-      "Scaling to four GPUs"
-    ]
-  },
-  {
-    "objectID": "pages/02-isambard.html",
-    "href": "pages/02-isambard.html",
-    "title": "Getting onto Isambard-AI",
-    "section": "",
-    "text": "How do I get a GPU?",
-    "crumbs": [
-      "Getting onto Isambard-AI"
-    ]
-  },
-  {
-    "objectID": "pages/02-isambard.html#overview",
-    "href": "pages/02-isambard.html#overview",
-    "title": "Getting onto Isambard-AI",
-    "section": "Overview",
-    "text": "Overview\nAdd the content for this section here. Keep each ## subsection to a few sentences, one code cell and at most one figure.",
-    "crumbs": [
-      "Getting onto Isambard-AI"
+      "7  Credits and references"
     ]
   }
 ]

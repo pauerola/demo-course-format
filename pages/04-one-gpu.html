@@ -86,6 +86,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Public+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
 
 
 </head>
@@ -123,55 +126,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">HPC for AI - Part 1</span></a>
+ <span class="menu-text">Home</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/00-before.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Before the course</span></a>
+ <span class="menu-text">0 Before the course</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/01-why-hpc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Why HPC for AI?</span></a>
+ <span class="menu-text">1 Why HPC for AI?</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/02-isambard.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Getting onto Isambard-AI</span></a>
+ <span class="menu-text">2 Getting onto Isambard-AI</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/03-fracatlas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Meet FracAtlas</span></a>
+ <span class="menu-text">3 Meet FracAtlas</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/04-one-gpu.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Training on one GPU</span></a>
+ <span class="menu-text">4 Training on one GPU</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/05-four-gpus.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Scaling to four GPUs</span></a>
+ <span class="menu-text">5 Scaling to four GPUs</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/06-good-practice.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Good practice and next steps</span></a>
+ <span class="menu-text">6 Good practice</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/07-credits.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Credits, acknowledgements and references</span></a>
+ <span class="menu-text">7 Credits and references</span></a>
   </div>
 </li>
     </ul>
@@ -202,6 +205,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="section-eyebrow">
+<p>Section 4 of 7</p>
+</div>
 <div class="section-question">
 <p>Can a computer learn to spot a fracture?</p>
 </div>
@@ -219,15 +225,16 @@ In short
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Start from a model trained on everyday photos, then fine-tune it on our X-rays.</li>
-<li><code>device=0</code> trains on one GPU; the GPU dashboard shows it working.</li>
-<li>Compare accuracy with a baseline. For imbalanced data, look at recall.</li>
+<li>Start from a model already trained on everyday photos, then fine-tune it on our X-rays.</li>
+<li><code>device=0</code> trains on one GPU, and the GPU dashboard shows it working.</li>
+<li>Compare accuracy with a simple baseline. For imbalanced data, look at recall.</li>
 </ul>
 </div>
 </div>
 <section id="the-model" class="level2">
-<h2 class="anchored" data-anchor-id="the-model">The model</h2>
-<p>We’ll use <strong>YOLOv8n-cls</strong>, a small image classifier. Training one from scratch needs far more than 4,000 images, so we use <strong>transfer learning</strong>: start from a model that has seen over a million everyday photos, then fine-tune it on X-rays.</p>
+<h2 class="anchored" data-anchor-id="the-model">4.1 The model</h2>
+<p>We’ll use <strong>YOLOv8n-cls</strong>, a small image classifier from the Ultralytics library. It’s a convolutional neural network, which picks out edges, textures and shapes in different parts of an image.</p>
+<p>Training one from scratch would need far more than 4,000 images. Instead we use <strong>transfer learning</strong>: start from a model that has seen over a million everyday photos (ImageNet), then fine-tune it on X-rays.</p>
 <div class="deeper callout callout-style-default callout-note callout-titled" title="Going deeper: why does transfer learning work on X-rays?">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -240,13 +247,14 @@ Going deeper: why does transfer learning work on X-rays?
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Early layers learn general features such as edges and textures. Fine-tuning mostly adjusts the later layers, so far fewer examples are needed.</p>
+<p>The early layers of a network learn general features such as edges and textures, which are useful for almost any image. Fine-tuning mostly adjusts the later layers to the new task, so far fewer examples are needed.</p>
 </div>
 </div>
 </div>
 </section>
 <section id="training-settings" class="level2">
-<h2 class="anchored" data-anchor-id="training-settings">Training settings</h2>
+<h2 class="anchored" data-anchor-id="training-settings">4.2 Training settings</h2>
+<p>Four settings control the run. You can change them in the exercise.</p>
 <div class="code-with-filename">
 <div class="code-with-filename-file">
 <pre><strong>hpc-for-ai.ipynb</strong></pre>
@@ -272,35 +280,151 @@ Going deeper: why does transfer learning work on X-rays?
 <td><code>IMG_SIZE</code></td>
 <td>Width and height of the square each image becomes</td>
 </tr>
+<tr class="odd">
+<td><code>BATCH</code></td>
+<td>Images seen before the weights are updated</td>
+</tr>
+<tr class="even">
+<td><code>WORKERS</code></td>
+<td>CPU processes loading images so the GPU isn’t waiting</td>
+</tr>
 </tbody>
 </table>
-<!-- ...one `##` per subsection; keep each to a few sentences, one code cell, one figure -->
-<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+</section>
+<section id="train" class="level2">
+<h2 class="anchored" data-anchor-id="train">4.3 Train</h2>
+<p>Open the GPU dashboard first, then run the cell. Each epoch prints the loss and the validation accuracy.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>hpc-for-ai.ipynb</strong></pre>
 </div>
-<div class="callout-title-container flex-fill">
-Exercise
+<div class="sourceCode" id="cb2" data-filename="hpc-for-ai.ipynb"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> YOLO(WEIGHTS)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model.train(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span><span class="bu">str</span>(SPLIT_DIR), epochs<span class="op">=</span>EPOCHS, imgsz<span class="op">=</span>IMG_SIZE,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    batch<span class="op">=</span>BATCH, workers<span class="op">=</span>WORKERS,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    device<span class="op">=</span><span class="dv">0</span>,   <span class="co"># one GPU</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    project<span class="op">=</span><span class="bu">str</span>(RUNS_DIR), name<span class="op">=</span><span class="st">"1gpu"</span>, seed<span class="op">=</span><span class="dv">42</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li>What is the recall for the fractured class, in plain English?</li>
-</ol>
-<div class="callout callout-style-default callout-caution callout-titled" title="Answer">
+<div class="deeper callout callout-style-default callout-note callout-titled" title="What the other arguments do">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Answer
+What the other arguments do
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A recall of 0.70 means 70% of fractures were found.</p>
+<p><code>project</code> and <code>name</code> decide where results are saved (<code>runs/1gpu</code> in your scratch folder). <code>seed</code> makes the run repeatable.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="how-did-training-go" class="level2">
+<h2 class="anchored" data-anchor-id="how-did-training-go">4.4 How did training go?</h2>
+<p>Compare the two loss curves. If training loss keeps falling while validation loss rises, the model is <strong>overfitting</strong>. That’s why Ultralytics keeps the best epoch as <code>best.pt</code>.</p>
+<!-- Add your own plot here, e.g. ![](images/results.png) -->
+</section>
+<section id="test-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="test-the-model">4.5 Test the model</h2>
+<p>Classify every test image with <code>best.pt</code> and compare with the real labels. In the confusion matrix, the diagonal is correct. A <strong>missed fracture</strong> sits in the fractured row, not-fractured column.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>predicted fractured</th>
+<th>predicted not</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>real fractured</strong></td>
+<td>found</td>
+<td>missed</td>
+</tr>
+<tr class="even">
+<td><strong>real not</strong></td>
+<td>false alarm</td>
+<td>correct</td>
+</tr>
+</tbody>
+</table>
+<div class="deeper callout callout-style-default callout-note callout-titled" title="Reading the classification report">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Reading the classification report
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Score</th>
+<th>For the fractured class</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Precision</td>
+<td>When it says “fractured”, how often is it right?</td>
+</tr>
+<tr class="even">
+<td>Recall</td>
+<td>What share of real fractures did it find?</td>
+</tr>
+<tr class="odd">
+<td>F1</td>
+<td>One score combining the two</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="is-that-accuracy-any-good" class="level2">
+<h2 class="anchored" data-anchor-id="is-that-accuracy-any-good">4.6 Is that accuracy any good?</h2>
+<p>Most images show no fracture, so a “model” that always says <em>not fractured</em> would be right over 80% of the time and find nothing. Accuracy alone misleads on imbalanced data.</p>
+<p>For triage, recall on the fractured class matters most. A missed fracture is worse than a false alarm a clinician can rule out.</p>
+</section>
+<section id="exercise" class="level2">
+<h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
+<div class="exercise callout callout-style-default callout-note callout-titled" title="Exercise · 10 min">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise · 10 min
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>What is the recall for the fractured class, in plain English?</li>
+<li>How many real fractures in the test set did the model miss?</li>
+<li>Would you use it to decide which X-rays to look at first?</li>
+</ol>
+<div class="callout callout-style-default callout-caution callout-titled" title="Show answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Show answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A recall of 0.70 means 70% of fractures were found and 30% missed. Missed fractures are in the fractured row, not_fractured column. Almost certainly not yet: you’d want to know how it does at other hospitals, on each body region, and with a split by patient.</p>
 </div>
 </div>
 </div>
@@ -311,26 +435,101 @@ Answer
 </section>
 
 </main> <!-- /main -->
-<button id="present-toggle" class="btn btn-sm btn-outline-primary" type="button">Present</button>
 <script>
 (function () {
-  var b = document.body, btn = document.getElementById("present-toggle");
-  var secs = [].slice.call(document.querySelectorAll("main section.level2")), i = 0;
-  function show(n) {
-    i = Math.max(0, Math.min(secs.length - 1, n));
-    secs.forEach(function (s, k) { s.classList.toggle("cur", k === i); });
-    window.scrollTo(0, 0);
+  var b = document.body;
+  var main = document.getElementById("quarto-document-content");
+  if (!main) return;
+
+  /* --- group the page into slides: opener + each ## section --- */
+  var h2s = [].slice.call(main.querySelectorAll(":scope > section.level2"));
+  var opener = document.createElement("div");
+  opener.className = "slide";
+  var kids = [].slice.call(main.children);
+  var first = h2s[0];
+  kids.forEach(function (k) {
+    if (k === first) return;
+    if (first && k.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING) opener.appendChild(k);
+  });
+  main.insertBefore(opener, first || null);
+  var slides = [opener].concat(h2s);
+  h2s.forEach(function (s) { s.classList.add("slide"); });
+  var idx = 0;
+
+  /* --- top bar --- */
+  var title = (document.querySelector("h1.title") || {}).textContent || document.title;
+  var bar = document.createElement("div");
+  bar.className = "topbar";
+  bar.innerHTML =
+    '<button class="ib" id="sb-toggle" aria-label="Show or hide the menu" type="button">' +
+    '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="14" height="12" rx="2"/><path d="M7 3v12"/></svg></button>' +
+    '<div class="crumb">HPC for AI · <b></b></div>' +
+    '<div class="seg" role="group" aria-label="Reading mode"><button id="m-read" aria-pressed="true" type="button">Read</button><button id="m-pres" aria-pressed="false" type="button">Present</button></div>';
+  bar.querySelector("b").textContent = title.trim();
+  main.insertBefore(bar, main.firstChild);
+
+  /* --- bottom bar for present mode --- */
+  var pbar = document.createElement("div");
+  pbar.className = "pbar";
+  pbar.innerHTML = '<button id="p-prev" aria-label="Previous slide" type="button">←</button><div class="trk"><i id="p-fill"></i></div><span id="p-count"></span><button id="p-next" aria-label="Next slide" type="button">→</button>';
+  b.appendChild(pbar);
+
+  /* --- subsection list under the current item in the left menu --- */
+  var links = [];
+  var active = document.querySelector("#quarto-sidebar .sidebar-link.active");
+  if (active && h2s.length) {
+    var ul = document.createElement("ul");
+    ul.className = "sub-toc";
+    h2s.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").trim() : "Section";
+      a.addEventListener("click", function (e) {
+        if (b.classList.contains("present")) { e.preventDefault(); show(i + 1); }
+      });
+      li.appendChild(a); ul.appendChild(li); links.push(a);
+    });
+    active.parentNode.appendChild(ul);
   }
-  btn.onclick = function () {
-    var on = b.classList.toggle("present");
-    btn.textContent = on ? "Read" : "Present";
-    if (on) show(0); else secs.forEach(function (s) { s.classList.remove("cur"); });
-  };
+  function mark(i) { links.forEach(function (a, k) { a.classList.toggle("on", k === i - 1); }); }
+
+  function show(n) {
+    idx = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle("cur", k === idx); });
+    document.getElementById("p-fill").style.width = ((idx + 1) / slides.length * 100) + "%";
+    document.getElementById("p-count").textContent = (idx + 1) + " / " + slides.length;
+    mark(idx); window.scrollTo(0, 0);
+  }
+  function setMode(m) {
+    var on = m === "present";
+    b.classList.toggle("present", on);
+    document.getElementById("m-read").setAttribute("aria-pressed", String(!on));
+    document.getElementById("m-pres").setAttribute("aria-pressed", String(on));
+    if (on) show(idx); else slides.forEach(function (s) { s.classList.remove("cur"); });
+  }
+  document.getElementById("m-read").onclick = function () { setMode("read"); };
+  document.getElementById("m-pres").onclick = function () { setMode("present"); };
+  document.getElementById("sb-toggle").onclick = function () { b.classList.toggle("sb-closed"); };
+  document.getElementById("p-prev").onclick = function () { show(idx - 1); };
+  document.getElementById("p-next").onclick = function () { show(idx + 1); };
   document.addEventListener("keydown", function (e) {
     if (!b.classList.contains("present")) return;
-    if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); show(i + 1); }
-    if (e.key === "ArrowLeft"  || e.key === "PageUp")   { e.preventDefault(); show(i - 1); }
+    if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); show(idx + 1); }
+    if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); show(idx - 1); }
+    if (e.key === "Escape") setMode("read");
   });
+
+  /* --- highlight the subsection being read --- */
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (es) {
+      if (b.classList.contains("present")) return;
+      es.forEach(function (en) { if (en.isIntersecting) mark(h2s.indexOf(en.target) + 1); });
+    }, { rootMargin: "-20% 0px -70% 0px" });
+    h2s.forEach(function (s) { io.observe(s); });
+  }
+  mark(0);
 })();
 </script>
 <style>
@@ -781,13 +980,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../pages/03-fracatlas.html" class="pagination-link" aria-label="Meet FracAtlas">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Meet FracAtlas</span>
+      <a href="../pages/03-fracatlas.html" class="pagination-link" aria-label="3  Meet FracAtlas">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">3 Meet FracAtlas</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../pages/05-four-gpus.html" class="pagination-link" aria-label="Scaling to four GPUs">
-        <span class="nav-page-text">Scaling to four GPUs</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../pages/05-four-gpus.html" class="pagination-link" aria-label="5  Scaling to four GPUs">
+        <span class="nav-page-text">5 Scaling to four GPUs</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
