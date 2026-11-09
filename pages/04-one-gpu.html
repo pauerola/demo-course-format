@@ -118,10 +118,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="../">HPC for AI · Part 1</a> 
-        <div class="sidebar-tools-main">
-    <a href="../slides.html" title="Slides" class="quarto-navigation-tool px-1" aria-label="Slides"><i class="bi bi-easel"></i></a>
-    <a href="../hpc-for-ai.ipynb" title="Notebook" class="quarto-navigation-tool px-1" aria-label="Notebook"><i class="bi bi-journal-code"></i></a>
-</div>
     </div>
       </div>
     <div class="sidebar-menu-container"> 
@@ -494,7 +490,21 @@ Show answer
       });
       li.appendChild(a); ul.appendChild(li); links.push(a);
     });
-    active.parentNode.appendChild(ul);
+    var box = active.closest(".sidebar-item-container") || active;
+    box.parentNode.insertBefore(ul, box.nextSibling);
+  }
+
+  /* --- Slides / Notebook / Setup pills under the title --- */
+  var home = document.querySelector("#quarto-sidebar .sidebar-link");
+  var base = home ? (home.getAttribute("href") || "").replace(/index\.html.*$/, "") : "";
+  var menu = document.querySelector("#quarto-sidebar .sidebar-menu-container");
+  if (menu) {
+    var res = document.createElement("div");
+    res.className = "res";
+    [["Slides", "slides.html"], ["Notebook", "hpc-for-ai.ipynb"], ["Setup", "pages/00-before.html"]].forEach(function (r) {
+      var a = document.createElement("a"); a.textContent = r[0]; a.href = base + r[1]; res.appendChild(a);
+    });
+    menu.parentNode.insertBefore(res, menu);
   }
   function mark(i) { links.forEach(function (a, k) { a.classList.toggle("on", k === i - 1); }); }
 
