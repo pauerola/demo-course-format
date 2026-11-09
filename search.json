@@ -100,6 +100,13 @@
     ]
   },
   {
+    "objectID": "slides.html#placeholder-slides",
+    "href": "slides.html#placeholder-slides",
+    "title": "HPC for AI - Part 1",
+    "section": "Placeholder slides",
+    "text": "Placeholder slides\nReplace this file with the slides used in the session (or point the Slides button in _quarto.yml at your own file)."
+  },
+  {
     "objectID": "pages/04-one-gpu.html",
     "href": "pages/04-one-gpu.html",
     "title": "Training on one GPU",
