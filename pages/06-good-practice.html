@@ -117,7 +117,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <img src="../assets/logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
     <div class="sidebar-title mb-0 py-0">
-      <a href="../">HPC for AI · Part 1</a> 
+      <a href="../">HPC for AI</a> 
     </div>
       </div>
     <div class="sidebar-menu-container"> 
@@ -428,6 +428,68 @@ Show answer
     h2s.forEach(function (s) { io.observe(s); });
   }
   mark(0);
+})();
+</script>
+
+<script>
+/* ---- sidebar: fonts, title + subtitle, numbered items, completion dots ---- */
+(function () {
+  /* load the fonts even if the head include was dropped */
+  if (!document.querySelector('link[href*="Bricolage"]')) {
+    var l = document.createElement("link"); l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap";
+    document.head.appendChild(l);
+  }
+  var sb = document.getElementById("quarto-sidebar");
+  if (!sb) return;
+
+  /* title + subtitle */
+  var t = sb.querySelector(".sidebar-title");
+  if (t) {
+    var a = t.querySelector("a");
+    if (a) a.textContent = "HPC for AI"; else t.textContent = "HPC for AI";
+    if (!t.querySelector("small")) { var s = document.createElement("small"); s.textContent = "Part 1 \u00b7 Isambard-AI"; t.appendChild(s); }
+  }
+
+  /* completion state (this browser only) */
+  var KEY = "hpc-ai-1-done", done = {};
+  try { done = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {} }
+  function id(href) { return (href || "").split("#")[0].replace(/^.*\//, ""); }
+
+  var curId = id(location.pathname);
+  sb.querySelectorAll("a.sidebar-link").forEach(function (a) {
+    if (a.closest(".sub-toc")) return;
+    var li = a.closest("li");
+    var span = a.querySelector(".menu-text") || a;
+    var txt = span.textContent.replace(/\s+/g, " ").trim();
+    if (txt === "Home") { if (li) li.classList.add("home-item"); return; }
+    var m = txt.match(/^(\d+)\s+(.*)$/);
+    if (!m) return;
+    var pid = id(a.getAttribute("href"));
+    span.innerHTML = "";
+    var n = document.createElement("span"); n.className = "n"; n.textContent = m[1];
+    var lbl = document.createElement("span"); lbl.className = "lbl"; lbl.textContent = m[2];
+    span.appendChild(n); span.appendChild(lbl);
+    span.style.display = "contents";
+    var dot = document.createElement("i");
+    dot.className = "dot" + (done[pid] ? "" : " todo");
+    dot.dataset.pid = pid; dot.title = done[pid] ? "Completed" : "Not completed yet";
+    a.appendChild(dot);
+  });
+
+  /* a section counts as completed once the reader reaches its end */
+  var end = document.querySelector("nav.page-navigation") || document.querySelector(".nav-footer");
+  if (end && "IntersectionObserver" in window && curId) {
+    new IntersectionObserver(function (es, o) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        done[curId] = 1; save(); o.disconnect();
+        var d = sb.querySelector('.dot[data-pid="' + curId + '"]');
+        if (d) { d.classList.remove("todo"); d.title = "Completed"; }
+      });
+    }).observe(end);
+  }
 })();
 </script>
 <style>
